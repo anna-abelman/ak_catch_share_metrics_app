@@ -1,0 +1,234 @@
+/* import Google fonts*/
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+/*reset fonts,margins, padding*/
+body {
+margin:0px;
+padding:0px;
+} 
+
+/*background color themes */
+
+.bg-white {background:white;}
+
+/*green - AFA*/
+.bg-dgreen {background: #205E42;}
+.bg-lgreen {background: #E8F3E1; }
+
+/*black - A80*/
+.bg-dblack {background: #000000;}
+.bg-lblack {background: #D9D9D9; }
+
+/*gray - cgoa rockfish*/
+.bg-dgray {background: #2C3544;}
+.bg-lgray {background: #CAD1DC; }
+
+/*brown - cgoa rockfish*/
+.bg-dbrown {background: #46412A;}
+.bg-lbrown {background: #E0DCCA ; }
+
+/*brown - cgoa rockfish*/
+.bg-dred {background: #70262B;}
+.bg-lred {background: #F5E3E4 ; }
+
+/*green - crab*/
+.bg-dgreencrab {background: #475D52;}
+.bg-lgreencrab {background: #D2DCD7 ; }
+
+
+/*styling for program large info panels*/
+
+.programpanelouter {
+width:400px;
+border:1px solid #b3b3b3;
+padding:0px;
+box-shadow: 2px 2px 10px #b3b3b3;
+float:left;
+margin-bottom:15px;
+}
+
+.programpanelinner {
+padding:15px 25px 15px 25px;
+font-family: 'Open Sans', Helvetica, Arial,'sans-serif'; 
+}
+
+.programpanelinner h1{
+color:black;
+font-size:28px;
+font-weight:600;}
+
+.programpanelinner h2{
+color:white;
+font-size:20px;
+font-weight:400;
+margin:0px;}
+
+.programpanelinfo {
+	padding:5px 25px 50px 25px;
+	font-family: 'Open Sans', Helvetica, Arial,'sans-serif'; 
+}
+.programpanelinfo h3{
+color:black;
+font-size:16px;
+font-weight:600;
+margin-top:20px;
+margin-bottom:0px;}
+
+.programpanelinfo p{ font-size:14px; margin: 0px;}
+.programpanelinfo li{ font-size:14px; color:black;}
+.programpanelinfo ul {padding-left:0px; margin-left:20px;margin-top:0px;}
+
+
+.programpanelinfo a:link {color:#4a90c3 !important; font-weight: 600; text-decoration:none;}
+.programpanelinfo a:visited {color:#4a90c3 !important; font-weight: 600; text-decoration:none;}
+.programpanelinfo a:hover {text-decoration:underline;}
+.programpanelinfo a:active {background-color:inherit;}
+
+img.center {
+display: block;
+    margin: 0 auto;
+	margin-top:15px;
+	margin-bottom:15px;
+
+}
+
+/*styling for content area*/
+.programdesc {  
+float:right;
+overflow:auto;
+font-family:  'Open Sans', Helvetica, Arial,'sans-serif'; 
+padding-left:25px;
+}
+
+
+
+.programdesc h1 {font-size:26px;
+color:white;
+padding:5px 5px 5px 5px;
+font-weight:500;
+margin-bottom:15px;
+margin-top:0px;
+
+}
+
+.programdesc p {margin-left:25px;
+font-size:16px;
+max-width:900px;
+margin-right:25px;
+margin-bottom:25px;}
+
+/* old css, not sure if this is used*/
+
+/* Three image containers (use 25% for four, and 50% for two, etc) */
+.column {
+  float: left;
+  width: 15%;
+  padding: 5px;
+}
+
+/* Clear floats after image containers */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.imgtxt {
+  float: left;
+}
+
+
+.clearfix {
+  overflow: auto;
+  padding-left: 5px;
+}
+
+
+
+table, th, td {
+  border:1px solid black;
+  border-collapse: collapse;
+}
+
+fieldset
+{
+    display: inline;
+    padding: 5px;
+    border: 0;
+}
+
+.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+
+
+
+
+
+.accordion-button:not(.collapsed) {
+    color: black;
+    background-color: #74a5c4;
+}
+
+.accordion-button {
+    color: white;
+    background-color: #154c79;
+  
+}

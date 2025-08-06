@@ -1,0 +1,167 @@
+<style>
+.parallax { 
+    /* The image used */
+    background-image:url("about_background.png");
+
+    /* Set a specific height */
+    height: 750px; 
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.myimg{
+    width: 80%;
+    position: center;
+    top: 200px;
+    left: 45%;
+}
+
+/* Three image containers (use 25% for four, and 50% for two, etc) */
+.column {
+  float: left;
+  padding: 1px;
+  
+}
+
+/* Clear floats after image containers */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.imgtxt {
+  float: left;
+}
+
+.clearfix {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+
+
+
+html, body {
+    margin: 0;
+    padding: 5px;
+}
+
+fieldset
+{
+    display: inline;
+    padding: 5px;
+    border: 0;
+}
+
+.styled-table {
+    border: 1px solid white;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 1em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    border: 1px solid white;
+    background-color: #154c79;
+    color: white;
+    text-align: left;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table tbody tr {
+    border: 1px solid white;
+     background-color: #dae5ed;
+     color: black;
+         border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+
+.styled-table tbody tr:last-of-type {
+    border: 1px solid white;
+     border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+
+}
+
+.styled-table tbody tr:hover {background-color: #74a5c4;
+}
+
+
+</style>
+
+
+<html>
+
+<body>
+
+
+<div class="clearfix">
+    <p style="float: left;"><img src="non_cs_fish.jpg" height="300" width="500" border="1px"></p>
+    <header style="padding-left: 510px; background-color: #873e23; color: white; padding-top: 7px; padding-bottom: 7px;  font-size: 20px;"><strong>PERCENTAGE CHANGE FOR 2021 TO 2022</strong></header>
+<br>
+
+</br>
+<!--begin.rcode echo = FALSE, warning=FALSE, message=FALSE
+library(here)
+library(tidyverse)
+library(janitor)
+library(gt)
+
+source(here("munge.R"))
+
+non_cs_tbl <- rbind(scallop_pct, flbsai_pct, rockfish_pct) %>% 
+  mutate(species = str_replace_all(species, "_", " ")) %>% 
+  rename("Non-Catch Share Program" = species) %>% 
+  mutate(across(.cols = c(2:9), ~ cell_spec(., background = case_when(.< -5 ~ "red",
+                                                                        (.>= -5 & .< 0) ~ 'lightcoral',
+                                                                        (.>= 0 & .<= 5) ~ "mediumseagreen",
+                                                                        (.> 5) ~ "green",
+                                                                       is.na(.) ~ "grey",
+                                                                       TRUE ~ "grey"), color = "white"))) %>%  
+  mutate(across(.cols = c(10), ~  cell_spec(., background = case_when(.< -5 ~ "green",
+                                                                        (.>= -5 & .< 0) ~ 'mediumseagreen',
+                                                                        (.>= 0 & .<= 5) ~ "lightcoral",
+                                                                        (.> 5) ~ "red",
+                                                                       is.na(.) ~ "grey",
+                                                                       TRUE ~ "grey"), color = "white"))) %>% 
+  rename("Gini*" = "Gini") %>% 
+kbl("html", align = "c", booktabs = T, escape=FALSE) %>% 
+   kable_styling(bootstrap_options = c("hover", "responsive"),  full_width = F) %>% 
+  row_spec(0, bold = TRUE, background = "#2E5C61", color = "white") %>% 
+  #row_spec(1:6, background = "#e1e3e3") %>% 
+  column_spec(1, bold = TRUE) %>% 
+  footnote(symbol = "Color scheme is reversed to indicate that increases in the Gini reflect increases in inequality of revenues across vessels.")
+
+non_cs_tbl
+
+end.rcode-->
+
+</div>
+
+</body>
+</html>

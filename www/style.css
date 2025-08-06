@@ -1,0 +1,317 @@
+
+/* --- styles.css --- */
+body, html {
+margin: 0;
+padding: 0;
+height: 100%;
+font-family: Arial, sans-serif;
+font_scale: 0.85;
+overflow-x: hidden;
+}
+ 
+.background {
+width: 100vw;
+position: relative;
+left: 50%;
+margin-left: -50vw;
+margin-top: -2rem; /* or -2rem if needed to cancel navbar padding */
+padding-top: 4rem; /* adjust based on navbar height */
+background-image: url("about_background.png");
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+background-position: center;
+background-repeat: no-repeat;
+min-height: 70vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: white;
+box-sizing: border-box;
+}
+ 
+.title-container {
+padding: 1rem 2rem;
+border-radius: 5px;
+font-size: 4vw;
+max-width: 90%;
+margin-bottom: 0rem;
+
+}
+
+.image-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.image-row img {
+  width: 175px;
+  height: 175px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 2px solid white;
+  transition: transform 0.3s ease;
+}
+
+.image-row img:hover {
+  transform: scale(1.05);
+}
+
+.wrap-image-left {
+  float: left;
+  width: 450px;
+  height: auto;
+  margin-right: 1rem;
+  margin-bottom: 0;
+  border-radius: 4px;
+}
+
+
+.wrap-section {
+  padding: 2rem;
+  background-color: white;
+  color: #333;
+  font-family: Arial, sans-serif;
+  margin: auto;
+  line-height: 1.5;
+}
+
+.wrap-image-right {
+  float: right;
+  width: 450px;
+  height: auto;
+  margin-left: 1rem;
+  margin-bottom: 0;
+  border-radius: 4px;
+}
+
+.wrap-header-left {
+  background-color: #873e23;
+  color: white;
+  padding: 1rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.wrap-header-right h4 {
+  margin: 0;
+}
+
+.wrap-header-left h4 {
+  margin: 0;
+}
+
+.wrap-header-right {
+  background-color: #873e23;
+  color: white;
+  padding: 1rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+
+/* Ensure text clears properly after image */
+  .wrap-section::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+
+/* Responsive behavior on small screens */
+  @media (max-width: 768px) {
+    .wrap-image-right {
+      float: none;
+      display: block;
+      margin: 1rem auto;
+      width: 100%;
+      max-width: 350px;
+    }
+    
+    .wrap-image-left {
+      float: none;
+      display: block;
+      margin: 1rem auto;
+      width: 100%;
+      max-width: 350px;
+    }
+    
+    .wrap-header {
+      text-align: center;
+    }
+    
+  }
+
+.style_link a:link, .style_link a:visited {
+  background-color: #154c79;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.style_link a:hover, .style_link a:active {
+  background-color: teal;
+}
+
+.styled-table {
+  border: 1px solid white;
+  border-collapse: collapse;
+  margin: 0.5rem 1rem;
+  font-size: 1em;
+  font-family: sans-serif;
+  min-width: 300px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+  border: 1px solid white;
+  background-color: #154c79;
+    color: white;
+  text-align: left;
+  border-bottom: 2px solid white;
+  border-top:2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  border-bottom: 2px solid white;
+  border-top:2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+
+.styled-table tbody tr {
+  border: 1px solid white;
+  background-color: #dae5ed;
+    color: black;
+  border-bottom: 2px solid white;
+  border-top:2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+
+
+.styled-table tbody tr:last-of-type {
+  border: 1px solid white;
+  border-bottom: 2px solid white;
+  border-top:2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+  
+}
+
+.styled-table tbody tr:hover {background-color: #74a5c4;
+}
+
+fieldset
+{
+  display: inline;
+  padding: 0px;
+  border: 0;
+}
+
+.custom-btn {
+  background-color: #2E5C61;
+  color: white !important;
+  min-width: 120px;
+  text-align: center;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  display: inline-block;
+  font-size: 1.0rem;
+  border-radius: 6px;
+  text-decoration: none;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3); /* Optional */
+}
+.custom-btn:hover {
+  background-color: #4E9CA5;
+  color: white;
+}
+
+      
+/* Base style for custom links */
+.custom-link {
+  color: #4a90c3;
+  text-decoration: none;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+/* Hover and focus state */
+.custom-link:hover,
+.custom-link:focus {
+  color: #2e6e9e;
+  text-decoration: underline;
+}
+
+/* Visited link style */
+.custom-link:visited {
+  color: #3b7da7;
+}
+
+/* Active (clicked) link style */
+.custom-link:active {
+  color: #245d84;
+}
+
+
+.nav-link.active {
+  background-color: transparent !important;
+  color: #154c79 !important;
+  font-weight: bold;
+  border-bottom: 2px solid #154c79;
+}
+
+/* Style nav_menu dropdown items like tabs */
+.dropdown-item {
+  color: #154c79;
+  background-color: transparent;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  color: white;
+  background-color: #154c79;
+  text-decoration: none;
+}
+
+/* Active menu item (if applicable) */
+.dropdown-item.active {
+  background-color: #2e5c61 !important;
+  color: white !important;
+}
+
+
+.resource-page {
+width: 100vw;
+position: relative;
+left: 50%;
+margin-left: -50vw;
+margin-top: -2rem; /* or -2rem if needed to cancel navbar padding */
+padding-top: 4rem; /* adjust based on navbar height */
+background-image: url("comm_sketch.png");
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+background-position: center;
+background-repeat: no-repeat;
+min-height: 70vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: white;
+box-sizing: border-box;
+}

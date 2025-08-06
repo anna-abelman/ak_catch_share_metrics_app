@@ -1,0 +1,327 @@
+<html lang="en">
+<head>
+<style type="text/css">
+.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.sng {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.def {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Responsive Background with Images</title>
+<style>
+body, html {
+margin: 0;
+padding: 0;
+height: 100%;
+font-family: Arial, sans-serif;
+}
+
+.background {
+margin: 0;
+  padding: 0;
+background-image: url("about_background.png");
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+background-position: center;
+background-repeat: no-repeat;
+min-height: 75vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: white;
+padding: 2rem 1rem;
+box-sizing: border-box;
+}
+
+.title {
+padding: 1rem 2rem;
+border-radius: 5px;
+font-size: 4vw;
+max-width: 90%;
+margin-bottom: 2rem;
+}
+
+.image-row {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+justify-content: center;
+}
+
+.image-row img {
+width: 175px;
+height: 175px;
+object-fit: cover;
+border-radius: 4px;
+border: 2px solid white;
+transition: transform 0.3s ease;
+}
+
+.image-row img:hover {
+transform: scale(1.05);
+}
+
+.wrap-image-left {
+  float: left;
+  width: 450px;
+  height: auto;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+
+.wrap-section {
+  padding: 2rem;
+  background-color: white;
+  color: #333;
+  font-family: Arial, sans-serif;
+  margin: auto;
+  line-height: 1.5;
+}
+
+.wrap-image-right {
+  float: right;
+  width: 450px;
+  height: auto;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.wrap-header-left {
+  background-color: #873e23;
+  color: white;
+  padding: 1rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.wrap-header-right {
+  background-color: #873e23;
+  color: white;
+  padding: 1rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+
+/* Ensure text clears properly after image */
+.wrap-section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+/* Responsive behavior on small screens */
+@media (max-width: 768px) {
+ .wrap-image-right {
+    float: none;
+    display: block;
+    margin: 1rem auto;
+    width: 100%;
+    max-width: 350px;
+  }
+  
+    .wrap-image-left {
+    float: none;
+    display: block;
+    margin: 1rem auto;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .wrap-header {
+    text-align: center;
+  }
+
+}
+
+.style_link a:link, a:visited {
+  background-color: #154c79;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.style_link a:hover, a:active {
+  background-color: teal;
+}
+
+.styled-table {
+    border: 1px solid white;
+    border-collapse: collapse;
+    margin:0;
+    font-size: 1em;
+    font-family: sans-serif;
+    min-width: 350px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    border: 1px solid white;
+    background-color: #154c79;
+    color: white;
+    text-align: left;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table tbody tr {
+    border: 1px solid white;
+     background-color: #dae5ed;
+     color: black;
+         border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+
+.styled-table tbody tr:last-of-type {
+    border: 1px solid white;
+     border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+
+}
+
+.styled-table tbody tr:hover {background-color: #74a5c4;
+}
+
+fieldset
+{
+    display: inline;
+    padding: 0px;
+    border: 0;
+}
+
+
+
+</style>
+</head>
+<body>
+<div class="background">
+<h1 class="title">Performance Metrics for North Pacific Catch Share Programs</h1>
+<div class="image-row">
+<img src="afa_picture.png" alt="img1" />
+<img src="a80_pic.png" alt="img2" />
+<img src="goa_rock_pic.png" alt="img3" />
+<img src="sablefish_pic.png" alt="img4" />
+<img src="halibut_pic.png" alt="img5" />
+<img src="crab_pic.png" alt="img6" />
+</div>
+</div>
+
+<div class="wrap-section">
+  <img src="about_cs.jpg" class="wrap-image-left" alt="Left Image" />
+  <h2 class="wrap-header-left">ABOUT CATCH SHARE PROGRAMS</h2>
+<p>
+
+Catch share programs are a fishery management tool that allocates a secure share of the fishery resource to individual fishermen, fishing cooperatives, fishing communities, or other entities to harvest a fixed quantity of fish each year. Catch shares do not directly impact the total allowable catch (TAC) of each species, and are merely a mechanism to allocate the TAC across various individuals and user groups. The North Pacific region has been the most active region in the U.S. in developing catch share programs, and contains 6 of the 16 programs currently in operation throughout the U.S. These programs are: the Western Alaska Community Development Quota (CDQ) (implemented in 1992), Alaska Halibut and Sablefish IFQ (implemented in 1995), American Fisheries Act (AFA) Pollock Cooperatives (implemented in 1999/2000), BSAI Crab Rationalization (implemented in 2005), Non-Pollock Trawl Catcher/Processor Groundfish Cooperatives (Amendment 80, implemented in 2008), and the Central Gulf of Alaska (GOA) Rockfish Program (extended the Rockfish Pilot Program in place from 2007-2011 and was implemented in 2012). This dashboard does not include performance metrics for the CDQ Program. The fisheries included in this chapter account for approximately 67% of all state and federal North Pacific groundfish landings in 2017 and approximately one third of all U.S. commercial landings (NMFS, 2017).
+</p>
+<p>
+Catch share programs have a variety of designs which reflect unique circumstances in each fishery and stated goals of the program. In the North Pacific, these designs include individual fishing quota (IFQ) programs such as the Alaska Halibut and Sablefish IFQ program, cooperative programs such as AFA pollock, Amendment 80, and the Central GOA Rockfish Program, combined IFQ and cooperative programs such as the BSAI Crab Rationalization, as well as community allocation programs like the CDQ program. There have been several stated goals for these programs, including: meeting conservation requirements, improving economic efficiency and/or flexibility, improving bycatch management, reducing excess capacity, eliminating derby fishing conditions, and improving
+safety at sea.
+</p>
+</div>
+
+
+
+<div class="wrap-section">
+  <img src="cs_metrics.jpg" class="wrap-image-right" alt="Right Image" />
+  <h2 class="wrap-header-right">CATCH SHARE PERFORMANCE METRICS</h2>
+  <p>
+      This section develops a consistent set of indicators to assess various dimensions of the economic performance of five catch share programs including the halibut IFQ program (which is managed by NOAA Fisheries and the International Pacific Halibut Commission), the sablefish IFQ program (implemented together with the halibut IFQ program but will be considered separately), the AFA pollock cooperatives program, the Amendment 80 program, and the central GOA Rockfish Program, as well as one quasi-catch share program, the Bering Sea Freezer Longline Catcher/Processors. These indicators were developed by NOAA Fisheries’ regional economists, anthropologists, and sociologists as the most representative indicators of economic performance for which data are available and can be regularly updated and were first summarized in Brinson and Thunberg (2013). These indicators can be broken down into three general categories: catch and landings, effort, and revenue, and their descriptions are listed in the tables below.
+
+  </p>
+   
+</div>
+
+
+
+
+<div class="style_link">
+<a href="https://apps-st.fisheries.noaa.gov/stapex/f?p=258:1">Access catch share metrics data</a> 
+</div>
+
+
+</body>
+</html>

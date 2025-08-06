@@ -1,0 +1,175 @@
+<style>
+.parallax { 
+    /* The image used */
+    background-image:url("about_background.png");
+
+    /* Set a specific height */
+    height: 600px; 
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.myimg{
+    width: 80%;
+    position: center;
+    top: 200px;
+    left: 45%;
+}
+
+/* Three image containers (use 25% for four, and 50% for two, etc) */
+.column {
+  float: left;
+  padding: 1px;
+  
+}
+
+/* Clear floats after image containers */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.imgtxt {
+  float: left;
+}
+
+.clearfix {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+
+
+
+html, body {
+    margin: 0;
+    padding: 5px;
+}
+
+fieldset
+{
+    display: inline;
+    padding: 5px;
+    border: 0;
+}
+
+.styled-table {
+    border: 1px solid white;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 1em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    border: 1px solid white;
+    background-color: #154c79;
+    color: white;
+    text-align: left;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+.styled-table tbody tr {
+    border: 1px solid white;
+     background-color: #dae5ed;
+     color: black;
+         border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+}
+
+
+.styled-table tbody tr:last-of-type {
+    border: 1px solid white;
+     border-bottom: 2px solid white;
+    border-top:2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+
+}
+
+.styled-table tbody tr:hover {background-color: #74a5c4;
+}
+
+.style_link a:link, a:visited {
+  background-color: #154c79;
+  color: white;
+  padding: 15px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+
+</style>
+
+<html>
+
+<body>
+<!-- Container element -->
+<section>
+<div class="parallax">
+<a> <img class="myimg" src="non_cs_title.png"> </a>
+<div class="row" style="width:90%; padding-left:425px;">
+
+  <div class="column" style='width: 26%; padding-right: 10px;'>
+    <img src="goa_othr_rock.png" alt="goa_rock" style="width:100%">
+  </div>
+    <div class="column" style='width: 26%; padding-right: 10px;'>
+    <img src="scallop_pic.png" alt="scallop" style="width:100%">
+  </div>
+   <div class="column" style='width: 26%; padding-right: 10px;'>
+    <img src="longliners_pic.png" alt="longliners" style="width:100%">
+  </div>
+
+</div>
+</div>
+</section>
+
+
+<section class="w3-container w3-center w3-content">
+<div class="clearfix">
+    <p style="float: left;"><img src="non_cs_fishing.jpg" height="300" width="500" border="1px"></p>
+    <header style="padding-left: 510px; background-color: #873e23; color: white; padding-top: 7px; padding-bottom: 7px;  font-size: 20px;"><strong>ABOUT NON-CATCH SHARE PROGRAMS</strong></header>
+    <p style="padding-left: 510px;">Catch share programs are a fishery management tool that allocates a secure share of the fishery resource to individual fishermen, fishing cooperatives, fishing communities, or other entities to harvest a fixed quantity of fish each year. Catch shares do not directly impact the total allowable catch (TAC) of each species, and are merely a mechanism to allocate the TAC across various individuals and user groups. The North Pacific region has been the most active region in the U.S. in developing catch share programs, and contains 6 of the 16 programs currently in operation throughout the U.S. <strong>This dashboard provides data on indicators of fishery performance for three selected fisheries not managed on the basis of catch shares, including trends over time.</strong> </p>
+</div>
+</section>
+
+<section class="w3-container w3-center w3-content">
+<div class="clearfix">
+    <p style="float: right;"><img src="non_cs_boat2.jpg" height="300" width="500" border="1px"></p>
+    <header style= "background-color: #873e23; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px;"><strong>NON-CATCH SHARE PERFORMANCE METRICS</strong></header>
+    <p>This section develops a consistent set of indicators to assess various dimensions of the economic performance of three non-catch share programsin the Alaska region including Central Gulf of Alaska Rockfish Program, Alaska Weathervane Scallop Program. as well as one quasi-catch share program, the Bering Sea Freezer Longline Catcher/Processors. These indicators were developed by NOAA Fisheries’ regional economists, anthropologists, and sociologists as the most representative indicators of economic performance for which data are available and can be regularly updated and were first summarized in Brinson and Thunberg (2013). These indicators can be broken down into three general categories: catch and landings, effort, and revenue, and their descriptions are listed in the tables below.  
+</p>
+
+<div class="style_link">
+<a href="https://apps-st.fisheries.noaa.gov/stapex/f?p=258:1">Access non-catch share metrics data</a> 
+</div>
+
+</div>
+</section>
+
+
+</body>
+</html>
