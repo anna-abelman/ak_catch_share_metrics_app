@@ -490,6 +490,33 @@
         "Built": "R 4.5.1; ; 2025-08-04 02:39:44 UTC; windows"
       }
     },
+    "bsicons": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "bsicons",
+        "Title": "Easily Work with 'Bootstrap' Icons",
+        "Version": "0.1.2",
+        "Authors@R": "c(\n    person(\"Carson\", \"Sievert\", , \"carson@posit.co\", role = c(\"cre\", \"aut\"),\n           comment = c(ORCID = \"0000-0002-4958-2844\")),\n    person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")),\n    person(\"Mark\", \"Otto\", role = \"cph\",\n           comment = \"Bootstrap icons maintainer\")\n  )",
+        "Description": "Easily use 'Bootstrap' icons inside 'Shiny' apps and 'R\n    Markdown' documents. More generally, icons can be inserted in any\n    'htmltools' document through inline 'SVG'.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://github.com/rstudio/bsicons",
+        "BugReports": "https://github.com/rstudio/bsicons/issues",
+        "Depends": "R (>= 2.10)",
+        "Imports": "cli, htmltools, rlang, utils",
+        "Suggests": "bslib, processx, testthat, webshot2, withr",
+        "Config/testthat/edition": "3",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.2.3",
+        "NeedsCompilation": "no",
+        "Packaged": "2023-11-03 23:29:00 UTC; cpsievert",
+        "Author": "Carson Sievert [cre, aut] (<https://orcid.org/0000-0002-4958-2844>),\n  Posit Software, PBC [cph, fnd],\n  Mark Otto [cph] (Bootstrap icons maintainer)",
+        "Maintainer": "Carson Sievert <carson@posit.co>",
+        "Repository": "CRAN",
+        "Date/Publication": "2023-11-04 00:30:05 UTC",
+        "Built": "R 4.5.1; ; 2025-08-04 01:07:31 UTC; windows"
+      }
+    },
     "bslib": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -1388,6 +1415,40 @@
         "Repository": "CRAN",
         "Date/Publication": "2025-04-05 15:00:02 UTC",
         "Built": "R 4.5.1; ; 2025-08-04 02:21:31 UTC; windows"
+      }
+    },
+    "gtExtras": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Type": "Package",
+        "Package": "gtExtras",
+        "Title": "Extending 'gt' for Beautiful HTML Tables",
+        "Version": "0.6.2",
+        "Authors@R": "c(\n    person(\"Thomas\", \"Mock\", , \"j.thomasmock@gmail.com\", role = c(\"aut\", \"cre\", \"cph\")),\n    person(\"Daniel D.\", \"Sjoberg\", , \"danield.sjoberg@gmail.com\", role = \"ctb\", comment = c(ORCID = \"0000-0003-0862-2018\"))\n    )",
+        "Description": "Provides additional functions for creating beautiful tables\n    with 'gt'. The functions are generally wrappers around boilerplate or\n    adding opinionated niche capabilities and helpers functions.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://github.com/jthomasmock/gtExtras,\nhttps://jthomasmock.github.io/gtExtras/",
+        "BugReports": "https://github.com/jthomasmock/gtExtras/issues",
+        "Depends": "R (>= 3.6.0), gt (>= 1.0.0)",
+        "Imports": "commonmark, dplyr (>= 1.0.9), fontawesome (>= 0.4.0), ggplot2\n(>= 3.4.0), glue (>= 1.6.1), htmltools (>= 0.5.3), paletteer\n(>= 1.4.0), rlang (>= 1.0.4), scales (>= 1.2.0), knitr (>=\n1.35), cli (>= 3.6.0)",
+        "Suggests": "base64enc (>= 0.1-3), bitops (>= 1.0.6), covr, fs (>= 1.5.2),\nhms, magrittr (>= 1.5), rvest (>= 1.0.3), sass (>= 0.1.1),\nstringr (>= 1.3.1), svglite (>= 2.1.0), testthat (>= 3.0.0),\ntibble (>= 3.0.0), tidyr (>= 1.0.0), tidyselect (>= 1.0.0),\nwebshot2 (>= 0.1.0), xml2 (>= 1.3.3), lifecycle (>= 1.0.0)",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.3",
+        "Config/testthat/edition": "3",
+        "Config/testthat/parallel": "true",
+        "NeedsCompilation": "no",
+        "Packaged": "2026-01-16 19:04:26 UTC; thomasmock",
+        "Author": "Thomas Mock [aut, cre, cph],\n  Daniel D. Sjoberg [ctb] (ORCID:\n    <https://orcid.org/0000-0003-0862-2018>)",
+        "Maintainer": "Thomas Mock <j.thomasmock@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-01-17 06:10:29 UTC",
+        "Built": "R 4.5.3; ; 2026-03-28 21:04:40 UTC; windows",
+        "RemoteType": "standard",
+        "RemotePkgRef": "gtExtras",
+        "RemoteRef": "gtExtras",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha": "0.6.2"
       }
     },
     "gtable": {
@@ -2336,6 +2397,34 @@
         "Archs": "x64"
       }
     },
+    "paletteer": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "paletteer",
+        "Title": "Comprehensive Collection of Color Palettes",
+        "Version": "1.6.0",
+        "Author": "See AUTHORS file.",
+        "Maintainer": "Emil Hvitfeldt <emilhhvitfeldt@gmail.com>",
+        "Description": "The choices of color palettes in R can be quite\n    overwhelming with palettes spread over many packages with many\n    different API's. This packages aims to collect all color palettes\n    across the R ecosystem under the same package with a streamlined API.",
+        "License": "GPL-3",
+        "URL": "https://github.com/EmilHvitfeldt/paletteer",
+        "BugReports": "https://github.com/EmilHvitfeldt/paletteer/issues",
+        "Depends": "R (>= 2.10)",
+        "Imports": "prismatic, rematch2, rlang, rstudioapi",
+        "Suggests": "covr, ggplot2 (>= 3.3.0), ggthemes (>= 4.0.0), harrypotter\n(>= 2.1.0), knitr, oompaBase, palr, pals, rmarkdown, scico,\ntestthat (>= 2.1.0), vdiffr, viridisLite",
+        "Copyright": "See LICENSE.note file.",
+        "Config/testthat/edition": "3",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.0",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-01-21 02:33:27 UTC; emilhvitfeldt",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-01-21 18:00:02 UTC",
+        "Built": "R 4.5.1; ; 2025-09-02 09:57:43 UTC; windows"
+      }
+    },
     "pillar": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -2444,6 +2533,33 @@
         "Repository": "CRAN",
         "Date/Publication": "2023-09-24 21:10:02 UTC",
         "Built": "R 4.5.1; ; 2025-08-04 00:20:08 UTC; windows"
+      }
+    },
+    "prismatic": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "prismatic",
+        "Title": "Color Manipulation Tools",
+        "Version": "1.1.2",
+        "Authors@R": "\n    person(\"Emil\", \"Hvitfeldt\", , \"emilhhvitfeldt@gmail.com\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0002-0679-1945\"))",
+        "Description": "Manipulate and visualize colors in a intuitive,\n    low-dependency and functional way.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://emilhvitfeldt.github.io/prismatic/,\nhttps://github.com/EmilHvitfeldt/prismatic",
+        "BugReports": "https://github.com/EmilHvitfeldt/prismatic/issues",
+        "Depends": "R (>= 3.2)",
+        "Imports": "graphics, farver (>= 2.0.1), grDevices",
+        "Suggests": "covr, cli, testthat (>= 3.0.0)",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.1",
+        "Config/testthat/edition": "3",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-04-10 22:54:31 UTC; emilhvitfeldt",
+        "Author": "Emil Hvitfeldt [aut, cre] (<https://orcid.org/0000-0002-0679-1945>)",
+        "Maintainer": "Emil Hvitfeldt <emilhhvitfeldt@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-04-10 23:10:03 UTC",
+        "Built": "R 4.5.1; ; 2025-09-02 08:19:32 UTC; windows"
       }
     },
     "processx": {
@@ -4055,64 +4171,73 @@
   },
   "files": {
     "app.R": {
-      "checksum": "66ee2c99e6f574a499dae156c5f2bf15"
+      "checksum": "8d247751174b5227aa7837525fb9bc2e"
     },
     "exports/final_metrics_2025-08-06.rds": {
       "checksum": "a5ce2d3cf64f60ac0200fe64d9b1090e"
     },
+    "exports/final_metrics_2026-05-08.rds": {
+      "checksum": "ac1809dad3cb0d9f11b69426404f99a4"
+    },
     "modules/a80_server.R": {
-      "checksum": "1dbe29c2e99439e42a4f26c09958b9ac"
+      "checksum": "bb1a9c0cbf61d31e57980ec44813982c"
     },
     "modules/a80_ui.R": {
-      "checksum": "71676707e42dd6ed92371d837960a6dd"
+      "checksum": "07518e3113bdce2a5d5c65f091d99b91"
     },
     "modules/afa_server.R": {
-      "checksum": "feaa2751d1b2c9a70f5f1d2bf80ac32f"
+      "checksum": "3e3aaa60f80ea7b04e642d2251f81625"
     },
     "modules/afa_ui.R": {
-      "checksum": "ffa823cba7df4c32e0a9ee9b9db91229"
+      "checksum": "4b1d464ab3e6f3fdbd01317eb6dfd520"
     },
     "modules/cgoa_rockfish_server.R": {
-      "checksum": "7fd8836fd8204d00935c507bb916e874"
+      "checksum": "bf9426353477c572c8e09bcb17ee94d9"
     },
     "modules/cgoa_rockfish_ui.R": {
-      "checksum": "673ab51287c60819c710951569ebc0ad"
+      "checksum": "90c2d312e66a7ba67296ce78ebe28aea"
     },
     "modules/crab_server.R": {
-      "checksum": "35550db101fd799ff5e054e4d5249bf2"
+      "checksum": "f7ba53af028a5b55ec1b0cdec450b6f7"
     },
     "modules/crab_ui.R": {
-      "checksum": "45852db361059fd1c674a025aa7d684f"
+      "checksum": "538a7885432b41fe15d923e3964a4773"
     },
     "modules/flbsai_pcod_server.R": {
-      "checksum": "44648ec717b9b59b6029f75bd6f4bf2f"
+      "checksum": "aa199e3d7a34ea5f72f2bbe358bc89df"
     },
     "modules/flbsai_pcod_ui.R": {
-      "checksum": "ef1c9d6a7badc45ee5fead464a17f4af"
+      "checksum": "9e51bfecda2a65968f00125c12c32d6b"
     },
     "modules/halibut_server.R": {
-      "checksum": "624bcc069ee8a890ef971e82ae90489c"
+      "checksum": "7d4cd5f71706912e099158dcb5adca3f"
     },
     "modules/halibut_ui.R": {
-      "checksum": "1db90413990d17451175e7cc1067c4fe"
+      "checksum": "03e09260d018a00b1bf56ba3a48d9097"
     },
     "modules/rockfish_server.R": {
-      "checksum": "b6dc7494d1408fec78eab56c6bed5c54"
+      "checksum": "8b19cfc149cbbd8575fec8f485128077"
     },
     "modules/rockfish_ui.R": {
-      "checksum": "305c8321e83b886edb7df691275b5e9a"
+      "checksum": "bc15f6580a9d6fec23fe3cd2c20130cd"
     },
     "modules/sablefish_server.R": {
-      "checksum": "00585b684cd0e58bcb725b17b5739646"
+      "checksum": "607793caf5df67cd7a33ce9a2b3dc6b3"
     },
     "modules/sablefish_ui.R": {
-      "checksum": "7cdb26b172acb3f1e4adadfa923838a6"
+      "checksum": "e246a4eb481e3341e361d559e311ebd7"
     },
     "modules/scallops_server.R": {
-      "checksum": "5304350f6e94922e765ac7cd61ba29ea"
+      "checksum": "fccbf5f4b64cc090eaaec7ea21b4d2f7"
     },
     "modules/scallops_ui.R": {
-      "checksum": "d81b97483037bb4e43353159dca574ab"
+      "checksum": "43ec6fe6e0ef8c92c13827cb43edae8c"
+    },
+    "R/build_full_preview_gt.R": {
+      "checksum": "ae8831ebe75ae168565449515fd541eb"
+    },
+    "R/build_metrics_gt.R": {
+      "checksum": "2515f28689a7695ddffc5f19b3644ea7"
     },
     "www/a80_page_new.html": {
       "checksum": "e72abe9400d848edf6de6f3fa28799f6"
@@ -4232,7 +4357,7 @@
       "checksum": "b128392eb9ae0d344a97c3d90bfc4b22"
     },
     "www/csinfo.css": {
-      "checksum": "8cc4639a744cb813afeececf7799a14e"
+      "checksum": "58605f00ea12362395055985c7655a5d"
     },
     "www/fish_stacked.jpg": {
       "checksum": "ca40d3afe5948db0b2fe074ad89b5043"
@@ -4246,8 +4371,11 @@
     "www/goa_rock_pic.png": {
       "checksum": "41f54264d9ff9b30f3ef1e43133e4dfe"
     },
+    "www/halibut_map.png": {
+      "checksum": "311d69ed7d1d1c2089b8d174b39e9648"
+    },
     "www/halibut_page_new.html": {
-      "checksum": "a1492814423c236ac3e082d7fc65bba5"
+      "checksum": "066432ec9c5e592b8674eff6e6ec7385"
     },
     "www/halibut_page_new.Rhtml": {
       "checksum": "64378590e36fa7a012fa43e05c8826a1"
@@ -4297,6 +4425,12 @@
     "www/pacific_cod.png": {
       "checksum": "6b2bb874de632bc7b6041ef762fda151"
     },
+    "www/pacific_cod_picture.png": {
+      "checksum": "24eacd03f7a597c8e1759ac9abf2a189"
+    },
+    "www/pacific_cod_trawl.html": {
+      "checksum": "1545281b6b5d1661e55365a195724e1e"
+    },
     "www/pacific_halibut.png": {
       "checksum": "3f7ea416ec3184320e85497af10b68ee"
     },
@@ -4323,6 +4457,9 @@
     },
     "www/sablefish.png": {
       "checksum": "e9895aa37c2552af8ef034b0187d5721"
+    },
+    "www/sablefish_map.png": {
+      "checksum": "be475a0bbc893d4c4023d9b9773b13a0"
     },
     "www/sablefish_page_new.html": {
       "checksum": "51f0646a80dd9b1c841fef467f60f743"
