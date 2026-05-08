@@ -21,7 +21,8 @@ cgoa_rockfish_ui <- function(id) {
                )),
              br(),
              card( shinycssloaders::withSpinner(gt_output(outputId = ns("cgoa_rf_table")), type = 7)),
-             downloadButton(ns("cgoa_rf_csv"),"Download data"))
+             actionButton(ns("cgoa_rf_preview_btn"), "Preview Full Data", icon = icon("table"), 
+                          style = "background-color: #033C73; color: white; border: none;") )
     ),
     br(),
     tags$div(style="background-color:#873e23 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",

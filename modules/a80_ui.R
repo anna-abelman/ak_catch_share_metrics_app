@@ -15,7 +15,10 @@ a80_ui <- function(id) {
                  options = list(`actions-box` = TRUE),multiple = T
                )),
              card(shinycssloaders::withSpinner(gt_output(outputId = ns("a80_table")), type = 7)),
-             downloadButton(ns("a80_csv"),"Download data"),
+             
+             # Updated the button to use your dark blue hex code instead of the generic info class
+             actionButton(ns("a80_preview_btn"), "Preview Full Data", icon = icon("table"), 
+                          style = "background-color: #033C73; color: white; border: none;")
       )),                   
     br(),
     tags$div(style="background-color:#873e23 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
@@ -96,6 +99,4 @@ a80_ui <- function(id) {
     tags$br(),
     tags$hr(style = "border-top: 5px solid #033C73;")
   )
-  
-  
 }

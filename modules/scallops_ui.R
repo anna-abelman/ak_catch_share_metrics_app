@@ -18,7 +18,9 @@ scallops_ui <- function(id) {
                  options = list(`actions-box` = TRUE),multiple = T
                )),
              card(shinycssloaders::withSpinner(gt_output(outputId = ns("scallop_table")), type = 7)),
-             downloadButton(ns("scallop_csv"),"Download data"))
+             actionButton(ns("scallop_preview_btn"), "Preview Full Data", icon = icon("table"), 
+                          style = "background-color: #033C73; color: white; border: none;") 
+      )
     ),
     br(),
     tags$div(style="background-color:#873e23 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
