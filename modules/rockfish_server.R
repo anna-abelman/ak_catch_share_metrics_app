@@ -6,13 +6,13 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
     
     ns <- session$ns
     
- 
-    
     ## ---------------------------------------------------------------------------------------------------
-    ## Rockfish Plots
+    ## Rockfish Data Reactives
     ## --------------------------------------------------------------------------------------------------
-    rockfish_final_metrics <- reactive({
-      rockfish_final_metrics <- rock_joined %>% 
+    
+    # 1. BASE FORMATTED DATA (Long format) - Used for Modal & Main Table
+    rockfish_base_formatted <- reactive({
+      rock_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season"), names_to = "varname", values_to = "Value") %>% 
@@ -38,55 +38,57 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
                                    TRUE ~ varname)) 
     })
     
+    # 2. Update UI Dropdown
     observe({
       updatePickerInput(session = session, inputId = "goa_rock_varname",
-                        choices = unique(rockfish_final_metrics()$varname), 
+                        choices = unique(rockfish_base_formatted()$varname), 
                         selected = c("Aggregate Landings (mt)","Aggregate revenue from species in the fishery")) 
-      
     })
     
-    goa_rock_df_stats <- reactive({
-      rockfish_final_metrics <- rockfish_final_metrics() %>%
-        pivot_wider(., names_from = "Season", values_from = "Value") %>% 
-        filter(varname %in% c(input$goa_rock_varname)) %>%
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#2C3544",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        )%>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
-    })
-    
+    # 3. RENDER MAIN UI TABLE (Uses the smart function)
     output$goa_rock_table <- render_gt({
-      expr = goa_rock_df_stats()
+      build_metrics_gt(
+        cleaned_data = rockfish_base_formatted(),
+        selected_vars = input$goa_rock_varname,
+        header_bg = "#2C3544" # GOA Rockfish Color
+      )
     })
     
-    goa_rock_csv<-reactive(rock_joined)
+    ## ---------------------------------------------------------------------------------------------------
+    ## PREVIEW MODAL LOGIC
+    ## --------------------------------------------------------------------------------------------------
     
-    output$goa_rock_csv<-downloadHandler(
+    # Trigger Modal
+    observeEvent(input$goa_rock_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "goa_rock_preview_table", 
+        download_id = "goa_rock_download_csv",
+        title = "Rockfish Full Dataset Preview"
+      )
+    })
+    
+    # Render Modal Table
+    output$goa_rock_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = rockfish_base_formatted(),
+        header_bg = "#2C3544" # GOA Rockfish Color
+      )
+    })
+    
+    # Download Handler for CSV
+    output$goa_rock_download_csv <- downloadHandler(
       filename = function() { "rockfish_full_metrics.csv" },
-      
       content = function(file) {
-        write.csv(goa_rock_csv(), file)
+        write.csv(rock_joined, file, row.names = FALSE)
       }
     )
     
+    ## ---------------------------------------------------------------------------------------------------
+    ## PLOTS
+    ## --------------------------------------------------------------------------------------------------
+    
     output$rockfish_lands_plot <- renderPlotly({
-      
       if(length(input$rockfish_lands) > 1){
         rock_acl_plot$All
       }else if(input$rockfish_lands == "Aggregate Landings"){
@@ -94,7 +96,6 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
       } else if(input$rockfish_lands == "ACL or Quota/TAC"){
         rock_acl_plot$`ACL or Quota/TAC`
       }  
-      
     })
     
     output$rockfish_utliz_plot <- renderPlotly({
@@ -102,7 +103,6 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
     })
     
     output$rockfish_effort_plot <- renderPlotly({
-      
       if(input$rockfish_effort == "Active vessels"& !is.null(rock_eff_plot$`Active vessels`)){
         rock_eff_plot$`Active vessels`
       } else if(input$rockfish_effort == "Season length"& !is.null(rock_eff_plot$`Season length`)){
@@ -115,20 +115,18 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
     })
     
     output$rockfish_rev_per_plot <- renderPlotly({
-      
       if(input$rockfish_rev_per == "Total Revenue/vessel"& !is.null(rock_rev_per_plot[[1]])){
         rock_rev_per_plot[[1]]
       } 
     })
     
     output$rockfish_gini_plot <- renderPlotly({
-      
       df_f <- rock_plot_df %>% filter(varname == "Gini Coefficient")
       
-      rockfish_gini_plot <- ggplot(data= df_f,
-                                   aes(x = Season, y = Val,group = varname, fill=varname,
-                                       text = paste("Season:", Season, "<br> Gini coefficient", Val)),
-                                   show.legend = FALSE, color = "grey")+
+      rockfish_custom_gini_plot <- ggplot(data= df_f,
+                                          aes(x = Season, y = Val,group = varname, fill=varname,
+                                              text = paste("Season:", Season, "<br> Gini coefficient", Val)),
+                                          show.legend = FALSE, color = "grey")+
         geom_line()+  
         geom_point()+
         theme_minimal()+
@@ -138,8 +136,7 @@ rockfish_server <- function(id, rock_joined, rock_plot_df, rock_acl_plot,
         labs(x = "Season", y = "Gini coefficient")+
         theme(axis.text.x = element_text(angle = -45, vjust = 0.5, hjust=1))
       
-      
-      ggplotly(rockfish_gini_plot, tooltip = "text") %>% 
+      ggplotly(rockfish_custom_gini_plot, tooltip = "text") %>% 
         layout(showlegend=FALSE)
     }) 
     

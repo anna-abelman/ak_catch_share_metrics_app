@@ -12,17 +12,20 @@ library(shinycssloaders)
 library(shinyWidgets)
 library(bslib)
 library(targets)
+library(gtExtras)
+library(htmlwidgets)
 
 # Read the RDS data created with targets and save_data.R
-data <- readRDS(here("exports", "final_metrics_2025-08-06.rds"))
+data <- readRDS(here("exports", "final_metrics_2026-05-08.rds"))
 
 # set current year
-current_yr = 2023
+current_yr = 2024
 
 # load all modules
 for(ii in dir("modules",pattern="\\.R$",full.names=TRUE))
   source(ii)
 
+source(here("R", "build_full_preview_gt.R"))
 
 # UI --------------------------------------------------------------------------------------------------------------------
 ui <- bslib::page_navbar(
@@ -34,34 +37,38 @@ ui <- bslib::page_navbar(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
   ),
   ### home ----
-  bslib::nav_panel(title = "Home", value = "home", icon = icon("fish"),
-                   tags$div(class = "background",
-                            div(class = "title-container",
-                                "Performance Metrics for North Pacific Catch Share Programs"),
-                            div(class = "image-row",
-                                tags$img(src = "afa_picture.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('afa_img_clicked', true);"),
-                                tags$img(src = "a80_pic.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('a80_img_clicked', true);"),
-                                tags$img(src = "goa_rock_pic.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('cgoa_img_clicked', true);"),
-                                tags$img(src = "sablefish_pic.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('sab_img_clicked', true);"),
-                                tags$img(src = "halibut_pic.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('hal_img_clicked', true);"),
-                                tags$img(src = "crab_pic.png", 
-                                         style = "cursor:pointer;",
-                                         onclick = "Shiny.setInputValue('crab_img_clicked', true);")
-                            )),
-                   div(class = "wrap-section",
-                       tags$img(src = "about_cs.jpg", class = "wrap-image-left"),
-                       div(class = "wrap-header-left", h4("ABOUT CATCH SHARE PROGRAMS")),
-                       p("Catch share programs are a fishery management tool that allocates a secure 
+  bslib::nav_panel(
+    title = "Home", value = "home", icon = icon("fish"),
+    tags$div(class = "background",
+             div(class = "title-container",
+                 "Performance Metrics for North Pacific Catch Share Programs"),
+             div(class = "image-row",
+                 tags$img(src = "afa_picture.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('afa_img_clicked', true);"),
+                 tags$img(src = "a80_pic.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('a80_img_clicked', true);"),
+                 tags$img(src = "goa_rock_pic.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('cgoa_img_clicked', true);"),
+                 tags$img(src = "sablefish_pic.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('sab_img_clicked', true);"),
+                 tags$img(src = "halibut_pic.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('hal_img_clicked', true);"),
+                 tags$img(src = "crab_pic.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('crab_img_clicked', true);"),
+                 tags$img(src = "pacific_cod_picture.png", 
+                          style = "cursor:pointer;",
+                          onclick = "Shiny.setInputValue('pcod_img_clicked', true);")
+             )),
+    div(class = "wrap-section",
+        tags$img(src = "about_cs.jpg", class = "wrap-image-left"),
+        div(class = "wrap-header-left", h4("ABOUT CATCH SHARE PROGRAMS")),
+        p("Catch share programs are a fishery management tool that allocates a secure 
                          share of the fishery resource to individual fishermen, fishing cooperatives,
                          fishing communities, or other entities to harvest a fixed quantity of fish
                          each year. Catch shares do not directly impact the total allowable catch (TAC)
@@ -79,11 +86,11 @@ ui <- bslib::page_navbar(
                          performance metrics for the CDQ Program. The fisheries included in this chapter 
                          account for approximately 67% of all state and federal North Pacific groundfish 
                          landings in 2017 and approximately one third of all U.S. commercial landings",
-                         tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
-                                class = "custom-link",
-                                target = "_blank",         
-                                "(NMFS, 2017).")),
-                       p("Catch share programs have a variety of designs which reflect unique circumstances
+          tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
+                 class = "custom-link",
+                 target = "_blank",         
+                 "(NMFS, 2017).")),
+        p("Catch share programs have a variety of designs which reflect unique circumstances
                          in each fishery and stated goals of the program. In the North Pacific, these designs 
                          include individual fishing quota (IFQ) programs such as the Alaska Halibut and Sablefish 
                          IFQ program, cooperative programs such as AFA pollock, Amendment 80, and the Central GOA 
@@ -92,11 +99,11 @@ ui <- bslib::page_navbar(
                          stated goals for these programs, including: meeting conservation requirements,
                          improving economic efficiency and/or flexibility, improving bycatch management, reducing 
                          excess capacity, eliminating derby fishing conditions, and improving safety at sea."),
-                   ),
-                   div(class = "wrap-section",
-                       tags$img(src = "cs_metrics.jpg", class = "wrap-image-right"),
-                       div(class = "wrap-header-right", h4("CATCH SHARE PERFORMANCE METRICS")),
-                       p(" This section develops a consistent set of indicators to assess various
+    ),
+    div(class = "wrap-section",
+        tags$img(src = "cs_metrics.jpg", class = "wrap-image-right"),
+        div(class = "wrap-header-right", h4("CATCH SHARE PERFORMANCE METRICS")),
+        p(" This section develops a consistent set of indicators to assess various
                          dimensions of the economic performance of five catch share programs including
                          the halibut IFQ program (which is managed by NOAA Fisheries and the International 
                          Pacific Halibut Commission), the sablefish IFQ program (implemented together with 
@@ -106,66 +113,74 @@ ui <- bslib::page_navbar(
                          indicators were developed by NOAA Fisheries’ regional economists, anthropologists, and 
                          sociologists as the most representative indicators of economic performance for which data
                          are available and can be regularly updated and were first summarized in ",
-                         tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
-                                class = "custom-link",
-                                target = "_blank",
-                        "Brinson and Thunberg (2013)."), "These indicators can be broken down into three general categories: catch and landings,
+          tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
+                 class = "custom-link",
+                 target = "_blank",
+                 "Brinson and Thunberg (2013)."), "These indicators can be broken down into three general categories: catch and landings,
                          effort, and revenue, and their descriptions are listed in the tables below."),
-                       tags$a(
-                         href = "https://www.fisheries.noaa.gov/alaska/sustainable-fisheries/catch-share-and-limited-access-programs-alaska",
-                         target = "_blank",         
-                         class = "custom-btn",  
-                         icon("circle-info"),           
-                         "Click here to learn more about these catch share programs"  ,
-                       )
-                   ),
-                   fluidRow(
-                     bslib::accordion(title = "Indicators", 
-                               bslib::accordion_panel(title = "Catch & Landings",  #### catch and landing table ------
-                                                      bslib::card(
-                                                        full_screen = TRUE,
-                                                        bslib::card_body(
-                                                          tags$div(tags$fieldset(style= "width: 40%;","The catch and landings metrics are the annual catch limit (ACL) or quota level, aggregate landings,
+        tags$a(
+          href = "https://www.fisheries.noaa.gov/alaska/sustainable-fisheries/catch-share-and-limited-access-programs-alaska",
+          target = "_blank",         
+          class = "custom-btn",  
+          icon("circle-info"),           
+          "Click here to learn more about these catch share programs"  ,
+        )
+    ),
+    fluidRow(
+      bslib::accordion(
+        title = "Indicators", 
+        bslib::accordion_panel(
+          title = "Catch & Landings",  #### catch and landing table ------
+          bslib::card(
+            full_screen = TRUE,
+            bslib::card_body(
+              tags$div(
+                tags$fieldset(
+                  style= "width: 40%;","The catch and landings metrics are the annual catch limit (ACL) or quota level, aggregate landings,
                                       the % of the quota that was utilized, as well as whether the ACL or quota was exceeded for any species in the program. While the quota amount is set based on the biological
                                       condition of the species in the program, the landings and the percentage of the quota that is landed (% utilization) reflect economic conditions and regulatory constraints of the fishery"),
-                                                                   tags$fieldset(style= "width: 50%; float: right;",
-                                                                                 tags$table(class="styled-table",
-                                                                                            tags$thead(
-                                                                                              tags$tr(
-                                                                                                tags$th('Indicator'),
-                                                                                                tags$th('Definition')
-                                                                                              )
-                                                                                            ),
-                                                                                            tags$tbody(
-                                                                                              tags$tr(
-                                                                                                tags$td('Quota allocated to catch share program'),
-                                                                                                tags$td('Annual quota of combined catch share program species, in terms of weight.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Aggregate landings'),
-                                                                                                tags$td('Annual total weight of combined catch share program species generated by vessels that fish quota')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('ACL exceeded'),
-                                                                                                tags$td('Was the ACL exceeded for any species/stock within the catch share program? (Y/N)')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Utilization (%)'),
-                                                                                                tags$td('Portion of target species TAC that is caught ad retained within a fishing year. Aggregate landings divided by quota allocated to catch share program.')
-                                                                                              )
-                                                                                            )
-                                                                                 )
-                                                                   )
-                                                          )
-                                                        )
-                                                      )
-                               ),                   
-                               
-                               bslib::accordion_panel("Fishing Effort",  #### fishing effort table ------
-                                                      bslib::card(
-                                                        full_screen = TRUE,
-                                                        bslib::card_body(
-                                                          tags$div(tags$fieldset(style= "width: 40%;","The effort metrics are the season length index, the number of active vessels, and the number of entities
+                tags$fieldset(
+                  style= "width: 50%; float: right;",
+                  tags$table(class="styled-table",
+                             tags$thead(
+                               tags$tr(
+                                 tags$th('Indicator'),
+                                 tags$th('Definition')
+                               )
+                             ),
+                             tags$tbody(
+                               tags$tr(
+                                 tags$td('Quota allocated to catch share program'),
+                                 tags$td('Annual quota of combined catch share program species, in terms of weight.')
+                               ),
+                               tags$tr(
+                                 tags$td('Aggregate landings'),
+                                 tags$td('Annual total weight of combined catch share program species generated by vessels that fish quota')
+                               ),
+                               tags$tr(
+                                 tags$td('ACL exceeded'),
+                                 tags$td('Was the ACL exceeded for any species/stock within the catch share program? (Y/N)')
+                               ),
+                               tags$tr(
+                                 tags$td('Utilization (%)'),
+                                 tags$td('Portion of target species TAC that is caught ad retained within a fishing year. Aggregate landings divided by quota allocated to catch share program.')
+                               )
+                             )
+                  )
+                )
+              )
+            )
+          )
+        ),                   
+        
+        bslib::accordion_panel(
+          "Fishing Effort",  #### fishing effort table ------
+          bslib::card(
+            full_screen = TRUE,
+            bslib::card_body(
+              tags$div(
+                tags$fieldset(
+                  style= "width: 40%;","The effort metrics are the season length index, the number of active vessels, and the number of entities
                                        holding share. The season length index is defined as the number of days in which at least one vessel was fishing divided
                                        by the number of days in the regulatory fishing season. This index provides a single, unit-less metric of season length
                                        that can be aggregated over multiple areas or species with different season lengths within the same program. The index
@@ -176,48 +191,51 @@ ui <- bslib::page_navbar(
                                        indicate changes in the expansion or consolidation of vessels in the fishery after rationalization. The number of
                                        entities holding share reflects the number of quota share owners that may be reduced as a result of consolidation or
                                        increase with new entrants over time and indicates the level of ownership accumulation in the fishery"),
-                                                                   tags$fieldset(style= "width: 50%; float: right;",
-                                                                                 tags$table(class="styled-table",
-                                                                                            tags$thead(
-                                                                                              tags$tr(
-                                                                                                tags$th('Indicator'),
-                                                                                                tags$th('Definition')
-                                                                                              )
-                                                                                            ),
-                                                                                            tags$tbody(
-                                                                                              tags$tr(
-                                                                                                tags$td('Season length index'),
-                                                                                                tags$td('The number of days in which at least one vessel was fishing divided by the number of days
+                tags$fieldset(
+                  style= "width: 50%; float: right;",
+                  tags$table(class="styled-table",
+                             tags$thead(
+                               tags$tr(
+                                 tags$th('Indicator'),
+                                 tags$th('Definition')
+                               )
+                             ),
+                             tags$tbody(
+                               tags$tr(
+                                 tags$td('Season length index'),
+                                 tags$td('The number of days in which at least one vessel was fishing divided by the number of days
                                                                   in the regulatory fishing season.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Active vessels'),
-                                                                                                tags$td('Annual number of vessels that fish quota and landing one or more pounds of any catch share program species.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Entities holding share'),
-                                                                                                tags$td('Annual total number of entities/individuals/vessel owners/permit holders receiving quota share at the beginning of the year.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Trips'),
-                                                                                                tags$td('Annual total number of trips taken by vessels fishing quota on which one or more pounds of any catch share program species were landed.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Days at sea'),
-                                                                                                tags$td('Annual total number of days absent on trips taken by vessels fishing quota on which one or more pounds of any catch share program species were landed.')
-                                                                                              )
-                                                                                            )
-                                                                                 )
-                                                                   )
-                                                          )
-                                                        )
-                                                      )
                                ),
-                               bslib::accordion_panel(title = "Landing Revenue", #### landing revenue table ------
-                                                      bslib::card(
-                                                        full_screen = TRUE,
-                                                        bslib::card_body(
-                                                          tags$div(tags$fieldset(style= "width: 40%;","The revenue metrics are the aggregate revenue from catch share species, average prices of catch share species,
+                               tags$tr(
+                                 tags$td('Active vessels'),
+                                 tags$td('Annual number of vessels that fish quota and landing one or more pounds of any catch share program species.')
+                               ),
+                               tags$tr(
+                                 tags$td('Entities holding share'),
+                                 tags$td('Annual total number of entities/individuals/vessel owners/permit holders receiving quota share at the beginning of the year.')
+                               ),
+                               tags$tr(
+                                 tags$td('Trips'),
+                                 tags$td('Annual total number of trips taken by vessels fishing quota on which one or more pounds of any catch share program species were landed.')
+                               ),
+                               tags$tr(
+                                 tags$td('Days at sea'),
+                                 tags$td('Annual total number of days absent on trips taken by vessels fishing quota on which one or more pounds of any catch share program species were landed.')
+                               )
+                             )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        bslib::accordion_panel(
+          title = "Landing Revenue", #### landing revenue table ------
+          bslib::card(
+            full_screen = TRUE,
+            bslib::card_body(
+              tags$div(
+                tags$fieldset(style= "width: 40%;","The revenue metrics are the aggregate revenue from catch share species, average prices of catch share species,
                                        the revenue per active vessel, and the Gini coefficient. Revenues are a function of landings and prices, which may
                                        trend in opposite directions due to changes in the demand for the species that may or may not be caused by the
                                        movement to catch share management. Prices may be affected by catch share management, but they are also influenced
@@ -227,116 +245,124 @@ ui <- bslib::page_navbar(
                                        coefficient is a measure of the evenness of the distribution of revenue among the active vessels, which increases
                                        as revenues become more concentrated on fewer vessels, and is useful to examine the distributional impacts of catch
                                        share programs across vessels"),
-                                                                   tags$fieldset(style= "width: 50%; float: right;",
-                                                                                 tags$table(class="styled-table",
-                                                                                            tags$thead(
-                                                                                              tags$tr(
-                                                                                                tags$th('Indicator'),
-                                                                                                tags$th('Definition')
-                                                                                              )
-                                                                                            ),
-                                                                                            tags$tbody(
-                                                                                              tags$tr(
-                                                                                                tags$td('Aggregate revenue from Catch Share species'),
-                                                                                                tags$td('Annual total revenue of combined catch share program species generated by vessels that fish quota.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Aggregate revenue from non-Catch Share species'),
-                                                                                                tags$td('Aggregate ex-vessel revenue from non-catch share species caught on catch share program trips.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Average price'),
-                                                                                                tags$td('Aggregate revenue from catch share species divided by aggregate landings')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Revenue per active vessel'),
-                                                                                                tags$td('Aggregate revenue divided by active vessels')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Revenue per trip'),
-                                                                                                tags$td('Aggregate revenue divided by trip')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Revenue per day at sea'),
-                                                                                                tags$td('Aggregate revenue divided by day at sea')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Gini Coefficient'),
-                                                                                                tags$td('A measure of the evenness of the distribution of revenue among the
+                tags$fieldset(
+                  style= "width: 50%; float: right;",
+                  tags$table(class="styled-table",
+                             tags$thead(
+                               tags$tr(
+                                 tags$th('Indicator'),
+                                 tags$th('Definition')
+                               )
+                             ),
+                             tags$tbody(
+                               tags$tr(
+                                 tags$td('Aggregate revenue from Catch Share species'),
+                                 tags$td('Annual total revenue of combined catch share program species generated by vessels that fish quota.')
+                               ),
+                               tags$tr(
+                                 tags$td('Aggregate revenue from non-Catch Share species'),
+                                 tags$td('Aggregate ex-vessel revenue from non-catch share species caught on catch share program trips.')
+                               ),
+                               tags$tr(
+                                 tags$td('Average price'),
+                                 tags$td('Aggregate revenue from catch share species divided by aggregate landings')
+                               ),
+                               tags$tr(
+                                 tags$td('Revenue per active vessel'),
+                                 tags$td('Aggregate revenue divided by active vessels')
+                               ),
+                               tags$tr(
+                                 tags$td('Revenue per trip'),
+                                 tags$td('Aggregate revenue divided by trip')
+                               ),
+                               tags$tr(
+                                 tags$td('Revenue per day at sea'),
+                                 tags$td('Aggregate revenue divided by day at sea')
+                               ),
+                               tags$tr(
+                                 tags$td('Gini Coefficient'),
+                                 tags$td('A measure of the evenness of the distribution of revenue among the
                                                           active vessels. The Gini coefficient increases as
                                                           revenues become more concentrated on fewer vessels.')
-                                                                                              )
-                                                                                            )
-                                                                                 )
-                                                                   )
-                                                          )
-                                                        )
-                                                      )
-                               ),
-                               bslib::accordion_panel("Other", #### other table ------
-                                                      bslib::card(
-                                                        full_screen = TRUE,
-                                                        bslib::card_body(
-                                                          tags$div(tags$fieldset(style= "width: 40%;","Depending on the program, other metrics are calculated that may be beneficial when determining the influence of the implemented catch-share program.
-                                               The other metrics and their descriptions can be found here."),
-                                                                   tags$fieldset(style= "width: 50%; float: right;",
-                                                                                 tags$table(class="styled-table",
-                                                                                            tags$thead(
-                                                                                              tags$tr(
-                                                                                                tags$th('Indicator'),
-                                                                                                tags$th('Definition')
-                                                                                              )
-                                                                                            ),
-                                                                                            tags$tbody(
-                                                                                              tags$tr(
-                                                                                                tags$td('Cost recovery fee'),
-                                                                                                tags$td('Amount collected for cost recovery.')
-                                                                                              ),
-                                                                                              tags$tr(
-                                                                                                tags$td('Share cap in place'),
-                                                                                                tags$td('An ownership share and/or allocation cap is any measure consistent with the MSA LAPP purpose
-                                                                  and intent whether or not the catch share program is required to have an excessive share cap. Y/N')
-                                                                                              ),
-                                                                                              
-                                                                                            )
-                                                                                 )
-                                                                   )
-                                                          )
-                                                        )
-                                                      )
                                )
-                     ),
-                     
-                   ),
-                   
-                   column(width=12,
-                          tags$div(class = 'wrap-section',
-                                   tags$img(src = "fish_stacked.jpg",  class="wrap-image-left"),
-                                   tags$div(class = 'wrap-header-left',
-                                            h4(paste0("PERCENTAGE CHANGE FOR ", current_yr-1," TO ",  current_yr))),
-                                   bslib::card(  class = "border-0 shadow-none", tableOutput("cs_percent_tbl")),
-                          )),
-                   tags$footer(tags$a(href="https://www.psmfc.org/program/alaska-fisheries-information-network-akfin?pid=17",
-                                      img(src='PSMFC-Logo-new.png',
-                                          align = "right", width = "75", height = "75")),
-                               tags$a(href="https://www.fisheries.noaa.gov/about/alaska-fisheries-science-center",
-                                      img(src='nmfslogo_color.png',
-                                          align = "right", width = "175", height = "75")),
-                               style= "background-color:  #dae5ed")
+                             )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        bslib::accordion_panel(
+          "Other", #### other table ------
+          bslib::card(
+            full_screen = TRUE,
+            bslib::card_body(
+              tags$div(
+                tags$fieldset(style= "width: 40%;","Depending on the program, other metrics are calculated that may be beneficial when determining the influence of the implemented catch-share program.
+                                               The other metrics and their descriptions can be found here."),
+                tags$fieldset(
+                  style= "width: 50%; float: right;",
+                  tags$table(class="styled-table",
+                             tags$thead(
+                               tags$tr(
+                                 tags$th('Indicator'),
+                                 tags$th('Definition')
+                               )
+                             ),
+                             tags$tbody(
+                               tags$tr(
+                                 tags$td('Cost recovery fee'),
+                                 tags$td('Amount collected for cost recovery.')
+                               ),
+                               tags$tr(
+                                 tags$td('Share cap in place'),
+                                 tags$td('An ownership share and/or allocation cap is any measure consistent with the MSA LAPP purpose
+                                                                  and intent whether or not the catch share program is required to have an excessive share cap. Y/N')
+                               ),
+                               
+                             )
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      
+    ),
+    
+    column(width=12,
+           tags$div(class = 'wrap-section',
+                    tags$img(src = "fish_stacked.jpg",  class="wrap-image-left"),
+                    tags$div(class = 'wrap-header-left',
+                             h4(paste0("PERCENTAGE CHANGE FOR ", current_yr-1," TO ",  current_yr))),
+                    bslib::card(  class = "border-0 shadow-none", tableOutput("cs_percent_tbl")),
+           )),
+    tags$footer(tags$a(href="https://www.psmfc.org/program/alaska-fisheries-information-network-akfin?pid=17",
+                       img(src='PSMFC-Logo-new.png',
+                           align = "right", width = "75", height = "75")),
+                tags$a(href="https://www.fisheries.noaa.gov/about/alaska-fisheries-science-center",
+                       img(src='nmfslogo_color.png',
+                           align = "right", width = "175", height = "75")),
+                style= "background-color:  #dae5ed")
   ),
   
   ### catch share species tabs ------------------------------------------------------------
   #### a80 ------
-  bslib::nav_menu(title = "Amendment 80", value = "a80",
-           bslib::nav_panel("About", value = "a80_about",
-                     bslib::layout_columns(
-                       col_widths = c(4, 8),
-                       bslib::card(fill = FALSE, fillable = FALSE,  class = "border-0 shadow-none",
-                            includeHTML(path = "./www/a80_page_new.html")),
-                       bslib::card(fill = FALSE, fillable = FALSE,
-                            tags$div(style="background-color:#262626 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("MANAGEMENT CONTEXT"))),
-                            p("The Bering Sea/Aleutian Islands non-Pollock Trawl Catcher-Processor Groundfish Cooperatives Program (also known as Amendment 80) 
+  bslib::nav_menu(
+    title = "Amendment 80", value = "a80",
+    bslib::nav_panel(
+      "About", value = "a80_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(fill = FALSE, fillable = FALSE,  class = "border-0 shadow-none",
+                    includeHTML(path = "./www/a80_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#262626 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("The Bering Sea/Aleutian Islands non-Pollock Trawl Catcher-Processor Groundfish Cooperatives Program (also known as Amendment 80) 
                                                         was implemented in 2008 for those groundfish catcher/processors (CPs) fishing in the Bering Sea/Aleutian Islands (BSAI) region
                                                         that were not specifically listed as eligible to participate in the American Fisheries Act (AFA) Pollock Cooperatives Program. 
                                                         NOAA Fisheries identified 28 CP vessels that were eligible to participate in the Amendment 80 Program (Amendment 80 sector) and 
@@ -347,14 +373,15 @@ ui <- bslib::page_navbar(
                                                         vessels are typically smaller in size and processing capacity than the AFA CPs. Prior to the Amendment 80 program, these 
                                                         vessels primarily produced headed and gutted products, but as the race for fish has been eliminated and Amendment 80 initially 
                                                         implemented increased groundfish retention standards, they are increasingly producing other product forms."),
-                            p("The goals of the Amendment 80 program are to improve retention and utilization and reduce bycatch for the Amendment 80 sector. 
+          p("The goals of the Amendment 80 program are to improve retention and utilization and reduce bycatch for the Amendment 80 sector. 
                                                         The program also includes sideboard allowances in the GOA for pollock, Pacific cod, Pacific Ocean perch, northern rockfish, and
                                                         pelagic shelf rockfish (dusky rockfish) to limit these vessels’ participation in other fisheries to their historic levels. 
                                                         One cooperative formed in 2008 that included 16 of 24 participating vessels while the other vessels participated in the Amendment
                                                         80 limited access sector until 2011 when those vessels formed a second cooperative. Since 2017, a single cooperative comprises all Amendment 80 vessels."),
-                            tags$div(style="background-color:#262626 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                            p("Amendment 80 QS allocations are tied to the respective eligible vessels (or to the associated LLP in cases where a vessel is 
+          tags$div(
+            style="background-color:#262626 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("Amendment 80 QS allocations are tied to the respective eligible vessels (or to the associated LLP in cases where a vessel is 
                                                         lost or is withdrawn from the program), and are allocated to their cooperative based on the vessel’s catch history. Amendment
                                                         80 vessels that do not join a cooperative do not receive an exclusive harvest privilege and must fish in the Amendment 80 
                                                         limited access sector. Amendment 80 QS can be transferred by selling the vessel, its permits, and accompanying catch history.
@@ -365,24 +392,29 @@ ui <- bslib::page_navbar(
                                                         in perpetuity. The Amendment 80 Program has an excessive share provision that limits a person to holding 30% of the QS and CQ 
                                                         assigned to the Amendment 80 sector. Vessel use caps also limit an Amendment 80 vessel to harvesting 20% of the Amendment 80 
                                                         species catch limits allocated to the Amendment 80 sector."),
-                       )
-                     )
-           ),
-           bslib::nav_panel("Performance Metrics", value = "a80_metrics",
+        )
+      )
+    ),
+    bslib::nav_panel("Performance Metrics", value = "a80_metrics",
                      a80_ui('a80')
-           )
+    )
   ),
   #### halibut --------
-  bslib::nav_menu(title = "IFQ Halibut", value = "halibut",
-                  bslib::nav_panel("About", value = "halibut_about",
-                                   bslib::layout_columns(
-                       col_widths = c(4, 8),
-                       bslib::card(fill = FALSE, fillable = FALSE,class = "border-0 shadow-none",
-                            includeHTML(path = "./www/halibut_page_new.html")),
-                       bslib::card(fill = FALSE, fillable = FALSE,
-                            tags$div(style="background-color:#70262B !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("MANAGEMENT CONTEXT"))),
-                            p("The North Pacific Halibut IFQ program was implemented simultaneously with the North Pacific
+  bslib::nav_menu(
+    title = "IFQ Halibut", value = "halibut",
+    bslib::nav_panel(
+      "About", value = "halibut_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,class = "border-0 shadow-none",
+          includeHTML(path = "./www/halibut_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#70262B !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("The North Pacific Halibut IFQ program was implemented simultaneously with the North Pacific
                                                       Sablefish IFQ Program, but the sablefish IFQ program will be considered separately below. Halibut
                                                       in the North Pacific are commercially caught by catcher vessels (CVs) that deliver their catch
                                                       onshore and catcher/processor vessels (CPs) that catch and process their catch at sea using longline
@@ -396,7 +428,7 @@ ui <- bslib::page_navbar(
                                                       halibut catch limits, which vary by management area, is allocated to entities representing eligible
                                                       Western Alaska communities designated in the Magnuson-Stevens Act. However, this section only
                                                       examines the performance of the halibut IFQ portion of the program."),
-                            p("Halibut fisheries off the coast of Alaska are managed by two agencies: the International Pacific
+          p("Halibut fisheries off the coast of Alaska are managed by two agencies: the International Pacific
                                                       Halibut Commission (IPHC) and the North Pacific Fishery Management Council (NPFMC). The
                                                       IPHC is responsible for assessment of the halibut stock and establishes the annual Total Constant
                                                       Exploitation Yield (which is comparable to an ACL for the directed commercial fishery). The
@@ -409,16 +441,17 @@ ui <- bslib::page_navbar(
                                                       landings. QS allocations were issued in amounts commensurate with creditable halibut landings
                                                       during the “best five” of 7 years from 1984-1990. The primary objectives of the IFQ Program are to:
                                                       1) eliminate gear conflicts; 2) address safety concerns; and 3) improve product quality and value"),
-                            p("The Halibut and Sablefish IFQ program includes a cost recovery provision in which the fishermen
+          p("The Halibut and Sablefish IFQ program includes a cost recovery provision in which the fishermen
                                                       pay a fee based on the cost to the government to manage the program. Recoverable costs cannot
                                                       exceed 3% of the total ex-vessel value of the fishery and include the costs related to management,
                                                       data collection, and enforcement of a Limited Access Privilege Program (LAPP) or Community
                                                       Development Quota Program. Cost recovery began in 2000 for the halibut IFQ program and has
                                                       ranged from 1.0% to 3% of the ex-vessel value of the fishery. Since 2015, the 
                                                       fishery did not reach the 3% limit in only four years (2017, 2018, 2021, and 2022)."),
-                            tags$div(style="background-color:#70262B !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                            p("There are two forms of quota in the Halibut and Sablefish IFQ Program, QS and the annual
+          tags$div(
+            style="background-color:#70262B !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("There are two forms of quota in the Halibut and Sablefish IFQ Program, QS and the annual
                                                       allocation of IFQ in pounds derived from the QS. The QS are a revocable, indefinite privilege that
                                                       entitles the holder to a share of the total area- and vessel class-specific IFQ allocated each year.
                                                       Individuals as well as non-individuals (such as a corporation) can hold QS and IFQ. Prior to the
@@ -432,33 +465,37 @@ ui <- bslib::page_navbar(
                                                       entrants. IFQ are valid only for one year, but there are rollover provisions that allow QS holders
                                                       to carry over to the next year up to 10% of their unused IFQ and any overages (up to 10%) are
                                                       taken from the following year’s IFQ allocation."),
-                            p("Catcher vessel QS are transferable to other initial issuees or to those who have become transfer eligible through obtaining NOAA Fisheries’ approval by submitting an Application for Eligibility to
+          p("Catcher vessel QS are transferable to other initial issuees or to those who have become transfer eligible through obtaining NOAA Fisheries’ approval by submitting an Application for Eligibility to
                                                       Receive QS/IFQ. To be eligible, potential QS/IFQ recipients must be a U.S. citizen and have 150
                                                       or more days of experience working as part of a harvesting crew in any U.S. commercial fishery.
                                                       Halibut QS can be sold with or without the annual IFQ derived therefrom (plus adjustments from
                                                       prior year QS used). However, CV IFQ can be leased annually to other eligible permit holders only under limited circumstances. Non-individual entities new to the program are only able to purchase
                                                       QS or lease IFQ for the largest vessel class of “catcher/processor” quota (category A)."),
-                            p("The IFQ Program has a number of excessive share provisions. There are QS holding caps on both
+          p("The IFQ Program has a number of excessive share provisions. There are QS holding caps on both
                                                       individuals as well as entities. No person, individually or collectively, can hold/control more than
                                                       0.5%-1.5% of halibut QS in specific areas and combinations of areas. In addition, vessel use caps
                                                       limit each vessel to harvesting from 0.5%-1% of the halibut TAC in specific areas and combinations
                                                       of areas. Halibut CDQ fishing is not subject to excessive share provisions. There are also owner
                                                       on-board requirements for CV QS and IFQ to limit the use of hired skippers.")))),
-                  bslib::nav_panel("Performance Metrics", value = "halibut_metrics",
+    bslib::nav_panel("Performance Metrics", value = "halibut_metrics",
                      halibut_ui("halibut")
-           )
+    )
   ),
   #### crab ------
-  bslib::nav_menu(title = "BSAI Crab", value = "crab",
-                  bslib::nav_panel("About", value = "crab_about",
-                                   bslib::layout_columns(
-                       col_widths = c(4, 8),
-                       bslib::card(fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
-                            includeHTML(path = "./www/crab_page_new.html")),
-                       bslib::card(fill = FALSE, fillable = FALSE,
-                            tags$div(style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("MANAGEMENT CONTEXT"))),
-                            p("The Bering Sea and Aleutian Islands crab fisheries comprise large,
+  bslib::nav_menu(
+    title = "BSAI Crab", value = "crab",
+    bslib::nav_panel(
+      "About", value = "crab_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
+                    includeHTML(path = "./www/crab_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("The Bering Sea and Aleutian Islands crab fisheries comprise large,
                                                         industrial vessels using pot gear and a large-scale onshore processing
                                                         sector. The fishery management plan (FMP) governing these fisheries, the
                                                         Bering Sea and Aleutian Islands king and Tanner Crab FMP, was approved
@@ -471,7 +508,7 @@ ui <- bslib::page_navbar(
                                                         its implementation to limit access to the fisheries, establish a vessel
                                                         license limitation program, define essential fish habitat and associated
                                                         protection measures, amongst other topics."),
-                            p('Managing capacity in these fisheries has been a challenge since the
+          p('Managing capacity in these fisheries has been a challenge since the
                                                           inception of the FMP. Overcapacity in the Bering Sea and Aleutian
                                                           Islands (BSAI) Crab Fishery required season limitations to control catch
                                                           levels, with seasons in some fisheries only lasting five days. The
@@ -480,7 +517,7 @@ ui <- bslib::page_navbar(
                                                           crab fisheries are prosecuted. Harvesting and processing capacity
                                                           expanded to accommodate highly abbreviated seasons, leading to further
                                                           economic inefficiencies.'),
-                            p("To address overcapacity, the North Pacific Fishery Management Council
+          p("To address overcapacity, the North Pacific Fishery Management Council
                                                         took a series of actions to limit access to these resources, including a
                                                         moratorium on new vessels entering the fishery (1996); a vessel license
                                                         limitation program (2000); a capacity reduction (buyback) program
@@ -493,7 +530,7 @@ ui <- bslib::page_navbar(
                                                         crab, Western Aleutian Islands red king crab, Pribilof Islands red and
                                                         blue king crab, St. Matthew Island blue king crab, Bering Sea snow crab,
                                                         Eastern Bering Sea Tanner crab and Western Bering Sea Tanner crab."),
-                            p('Prior to implementation of the BSAI Crab Rationalization Program, the
+          p('Prior to implementation of the BSAI Crab Rationalization Program, the
                                                         Bering Sea Tanner Crab fishery was closed to fishing due to low stock
                                                         abundance. Two fisheries (Western Aleutian Islands red king crab and
                                                         Pribilof Island red and blue king crab) have been closed to fishing
@@ -505,9 +542,10 @@ ui <- bslib::page_navbar(
                                                         Western Bering Sea Tanner crab fishery was closed for two of the five
                                                         years, while the Eastern Bering Sea Tanner Crab fishery was closed for
                                                         one year since this split during the IFQ Program.'),
-                            tags$div(style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                            p("The North Pacific Fishery Management Council developed the BSAI Crab
+          tags$div(
+            style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("The North Pacific Fishery Management Council developed the BSAI Crab
                                                         Rationalization Program over a six-year period. In 2005, the BSAI Crab
                                                         Rationalization Program was implemented to address the race to harvest,
                                                         high bycatch and discard mortality, product quality issues and balance
@@ -521,7 +559,7 @@ ui <- bslib::page_navbar(
                                                         requirements, as well as several community protection measures. The
                                                         performance indicator information provided herein refers only to the IFQ
                                                         component of the BSAI Crab Rationalization Program."),
-                            p("Sablefish quota share can be sold with or without the annual IFQ derived from the quota share.
+          p("Sablefish quota share can be sold with or without the annual IFQ derived from the quota share.
                                                         Catcher vessel quota share can be transferred to other initial issuees or to those who have become
                                                         eligible to receive QS by transfer. To be eligible, potential QS/IFQ recipients must be a U.S.
                                                         citizen and have worked as part of a harvesting crew in any U.S. commercial fishery for at least
@@ -536,9 +574,10 @@ ui <- bslib::page_navbar(
                                                         on board when using CV QS and IFQ. There is also a revolving loan program implemented by the
                                                         NPFMC and NOAA Fisheries to assist entry level and small vessel fishermen acquire funding. The
                                                         loan program is capitalized through a portion of the cost recovery fees collected."),
-                            tags$div(style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("KEY EVENTS/FEATURES"))),
-                            p("King and Tanner crab are harvested in nine distinct fisheries that are
+          tags$div(
+            style="background-color:#475D52 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("KEY EVENTS/FEATURES"))),
+          p("King and Tanner crab are harvested in nine distinct fisheries that are
                                                           defined by a combination of species and spatial areas. Uniquely, the
                                                           Council was granted special Congressional authority to allocate
                                                           processor quota in addition to harvesting quota. IFQ privileges are
@@ -558,11 +597,11 @@ ui <- bslib::page_navbar(
                                                           shares. Annual individual processing quota is issued in the amounts
                                                           matched to the amounts of catcher vessel LLP harvest quota for the nine
                                                           fisheries."),
-                            p("This program requires reporting of some economic cost and revenue data
+          p("This program requires reporting of some economic cost and revenue data
                                                           from vessel owners. Processors also submit data on crew costs. These
                                                           data were intended to help determine if the program meets Council
                                                           objectives over time, including the use of processor quota share."),
-                            p("Section 304(d)(2) of the Magnuson-Stevens Act authorizes the Secretary
+          p("Section 304(d)(2) of the Magnuson-Stevens Act authorizes the Secretary
                                                           to adopt regulations implementing a cost recovery program to recover the
                                                           actual costs related to management, data collection and enforcement of a
                                                           Limited Access Privilege Program or Community Development Quota Program.
@@ -577,7 +616,7 @@ ui <- bslib::page_navbar(
                                                           have years in which no fees are collected, as was the case in 2009/10.
                                                           In 2014/15, $1.48 million was collected for the cost recovery program,
                                                           less than 1% of IFQ Crab revenue."),
-                            p('The purpose of excessive quota share caps is to prevent quota holders
+          p('The purpose of excessive quota share caps is to prevent quota holders
                                                           from controlling production (and processing) as well as achieving
                                                           management objectives, per the Magnuson-Stevens Act and the National
                                                           Standards. The BSAI Crab Rationalization Program has share caps in place
@@ -586,24 +625,29 @@ ui <- bslib::page_navbar(
                                                           or area, quota type, and entity type for owner quota share and from
                                                           2-20% of initial harvest quota share for crew quota share. Processors
                                                           may not hold or use more than 30% of processor shares in each fishery.'),
-                            p('The management year begins July 1 and ends June 30 of the following
+          p('The management year begins July 1 and ends June 30 of the following
                                                           year. Annual data are for the fishing year (e.g., the 2006/07 fishing
                                                           year). Crab quota refers to all of the IFQ fisheries combined.')))),
-                  bslib::nav_panel("Performance Metrics", value = "crab_metrics",
+    bslib::nav_panel("Performance Metrics", value = "crab_metrics",
                      crab_ui("crab")
-           )
+    )
   ),
   #### afa  ---------------
-  bslib::nav_menu(title = "AFA", value = "afa",
-                  bslib::nav_panel("About", value = "afa_about",
-                                   bslib::layout_columns(
-                                     col_widths = c(4, 8),
-                                     bslib::card(fill = FALSE, fillable = FALSE,class = "border-0 shadow-none",
-                                          includeHTML(path = "./www/afa_page_new.html")),
-                                     bslib::card(fill = FALSE, fillable = FALSE,
-                                          tags$div(style="background-color:#205E42 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                                   tags$header(strong("MANAGEMENT CONTEXT"))),
-                                          p("There are three types of vessels that participate in the Bering Sea and Aleutian Islands (BSAI) 
+  bslib::nav_menu(
+    title = "AFA", value = "afa",
+    bslib::nav_panel(
+      "About", value = "afa_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,class = "border-0 shadow-none",
+          includeHTML(path = "./www/afa_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#205E42 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("There are three types of vessels that participate in the Bering Sea and Aleutian Islands (BSAI) 
                                           walleye pollock fishery: catcher vessels (CVs) that deliver their catch onshore, catcher/processors (CPs) 
                                           that catch and process their catch at sea, and motherships that are at-sea processors receiving catch from CVs 
                                           but do not catch any of their own fish. Pollock in the BSAI management area are targeted only with pelagic (midwater) 
@@ -611,14 +655,15 @@ ui <- bslib::page_navbar(
                                           groundfish production volume and makes it the largest fishery in the United States by volume. 
                                           Ten percent of the BSAI total allowable catch (TAC) is allocated to communities through the Community Development Quota (CDQ) Program. 
                                           There is no recreational sector for pollock in the North Pacific."),
-                                          p("The American Fisheries Act (AFA) Pollock Cooperatives Program was established by the U.S. Congress under the American Fisheries Act in 1998, and was implemented for the 
+          p("The American Fisheries Act (AFA) Pollock Cooperatives Program was established by the U.S. Congress under the American Fisheries Act in 1998, and was implemented for the 
                                           CP sector in 1999 and the CV and mothership sectors in 2000. The goals of the AFA were to resolve frequent allocation disputes between the inshore (CVs) and offshore (CPs and motherships) 
                                           sectors and reduce externalities as a result of the race for fish. The AFA established minimum U.S. ownership requirements, vessel and processor participation requirements, defined the list of 
                                           eligible vessels, finalized the TAC allocation among sectors, provided an allocation to the CDQ Program, and authorized the formation of cooperatives. The allocation of the Bering Sea TAC to the AFA 
                                           (after the 10% allocation to the CDQ program and incidental catch allowance in other fisheries are deducted), is 50% to the CV sector, 40% to the CP sector, and 10% to the mothership sector."),
-                                          tags$div(style="background-color:#205E42 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                                   tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                                          p("Participation in the AFA pollock fishery is permitted only by the vessels listed in the American 
+          tags$div(
+            style="background-color:#205E42 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("Participation in the AFA pollock fishery is permitted only by the vessels listed in the American 
                                             Fisheries Act, and those eligible vessels are authorized to form cooperatives which receive an 
                                             allocation (exclusive harvest privilege) of a percentage of the Bering Sea pollock TAC from NOAA
                                             Fisheries. Five inshore cooperatives have formed between CVs and eligible shoreside processors, 
@@ -630,7 +675,7 @@ ui <- bslib::page_navbar(
                                             were put in place for AFA participants to self-regulate and reduce the number of incidentally caught 
                                             salmon in the pollock fishery and allowed NOAA Fisheries to allocate transferable prohibited species 
                                             catch (PSC) allowance for Chinook salmon to vessels in the pollock fishery."),
-                                          p("Catch share privileges under the AFA are revocable, but were allocated in perpetuity. There is a single
+          p("Catch share privileges under the AFA are revocable, but were allocated in perpetuity. There is a single
                                             cooperative in the CP and mothership sectors, and contracts among members of the cooperative have been 
                                             developed to allocate their catch across vessels. Catcher vessel cooperatives can exchange directed 
                                             fishing allowance among their member vessels as they see fit, but since the CV cooperative allocations
@@ -643,21 +688,26 @@ ui <- bslib::page_navbar(
                                             which is similar to a quota lease. There are also excessive use caps in both the inshore harvesting and processing
                                             sectors which state that no entity can harvest more than 17.5% or process more than 30% of the directed fishing
                                             allowance of pollock allocated to the inshore sector.")))),
-                  bslib::nav_panel("Performance Metrics", value = "afa_metrics",
-                                   afa_ui("afa")
-                  )
+    bslib::nav_panel("Performance Metrics", value = "afa_metrics",
+                     afa_ui("afa")
+    )
   ),
   #### sablefish ----           
-  bslib::nav_menu(title = "IFQ Sablefish", value = "sablefish",
-                  bslib::nav_panel("About", value = "sablefish_about",
-                                   bslib::layout_columns(
-                       col_widths = c(4, 8),
-                       bslib::card(fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
-                            includeHTML(path = "./www/sablefish_page_new.html")),
-                       bslib::card(fill = FALSE, fillable = FALSE,
-                            tags$div(style="background-color:#46412A !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("MANAGEMENT CONTEXT"))),
-                            p("The North Pacific Sablefish IFQ Program was implemented simultaneously with the North Pacific
+  bslib::nav_menu(
+    title = "IFQ Sablefish", value = "sablefish",
+    bslib::nav_panel(
+      "About", value = "sablefish_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(
+          fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
+          includeHTML(path = "./www/sablefish_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#46412A !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("The North Pacific Sablefish IFQ Program was implemented simultaneously with the North Pacific
                              Halibut IFQ Program, but they will be assessed separately in this report. Sablefish (also known as
                              black cod) in the North Pacific are commercially caught by catcher vessels (CVs) that deliver their
                              catch onshore and catcher/processor vessels (CPs) that catch and process their catch at sea using
@@ -668,7 +718,7 @@ ui <- bslib::page_navbar(
                              Quota (CDQ) program. There is not a substantial recreational sector for sablefish in the North
                              Pacific. Similar to the Halibut IFQ program, this section only examines the performance of the
                              sablefish IFQ portion of the program."),
-                            p("The sablefish IFQ program was developed by the North Pacific Fishery Management Council
+          p("The sablefish IFQ program was developed by the North Pacific Fishery Management Council
                               (NPFMC) and implemented by NOAA Fisheries in 1995. The sablefish IFQ program is managed
                               by the NPFMC, which is responsible for establishing Annual Catch Limits (ACLs) and TACs for
                               sablefish and allocating TACs among various user groups. Prior to the IFQ program, the fisheries
@@ -678,15 +728,16 @@ ui <- bslib::page_navbar(
                               were issued in amounts commensurate with creditable landings during the “best five” of 6 years
                               1985-1990. The primary objectives of the IFQ Program are to 1) eliminate gear conflicts; 2) address
                               safety concerns; and 3) improve product quality and value."),
-                            p("The Halibut and Sablefish IFQ Program includes a cost recovery provision whereby the fishermen
+          p("The Halibut and Sablefish IFQ Program includes a cost recovery provision whereby the fishermen
                               are assessed a fee based on the cost to the government to manage the program. The costs that can
                               be recovered include the costs related to management, data collection, and enforcement of a Limited
                               Access Privilege Program (LAPP) or Community Development Quota Program, and cannot exceed
                               3% of the total ex-vessel value of the fishery. Cost recovery began in 2000 for sablefish IFQ and has 
                               reached the 3% limit in 2015, 2016, 2019, 2020, 2023, and 2024."),
-                            tags$div(style="background-color:#46412A !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                            p("There are two forms of quota in the sablefish IFQ Program, QS and annual IFQ in pounds derived
+          tags$div(
+            style="background-color:#46412A !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("There are two forms of quota in the sablefish IFQ Program, QS and annual IFQ in pounds derived
                               from QS. Quota shares are a revocable, indefinite privilege that entitles the holder to a share of the
                               total area- and vessel class-specific IFQ allocated each year. Quota share holders can be individuals
                               or non-individuals (such as a corporation). Prior to the beginning of each fishing season, IFQ is
@@ -698,7 +749,7 @@ ui <- bslib::page_navbar(
                               opportunities for small operations and new entrants. IFQ are valid only for one year, but there are
                               provisions that allow QS holders to carry over to the next year up to 10% of their unused IFQ and
                               any overages (up to 10%) are taken from the following year’s IFQ allocation."),
-                            p("Sablefish quota share can be sold with or without the annual IFQ derived from the quota share.
+          p("Sablefish quota share can be sold with or without the annual IFQ derived from the quota share.
                               Catcher vessel quota share can be transferred to other initial issuees or to those who have become
                               eligible to receive QS by transfer. To be eligible, potential QS/IFQ recipients must be a U.S.
                               citizen and have worked as part of a harvesting crew in any U.S. commercial fishery for at least
@@ -713,21 +764,26 @@ ui <- bslib::page_navbar(
                               on board when using CV QS and IFQ. There is also a revolving loan program implemented by the
                               NPFMC and NOAA Fisheries to assist entry level and small vessel fishermen acquire funding. The
                               loan program is capitalized through a portion of the cost recovery fees collected.")))),
-                  bslib::nav_panel("Performance Metrics", value = "sablefish_metrics",
+    bslib::nav_panel("Performance Metrics", value = "sablefish_metrics",
                      sablefish_ui("sablefish")
-           )
+    )
   ),
   #### cgoa rockfish -----
-  bslib::nav_menu(title = "CGOA Rockfish", value = "cgoa_rock",
-                  bslib::nav_panel("About", value = "cgoa_rock_about",
-                                   bslib::layout_columns(
-                       col_widths = c(4, 8),
-                       bslib::card(fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
-                            includeHTML(path = "./www/cgoa_rock_page_new.html")),
-                       bslib::card(fill = FALSE, fillable = FALSE,
-                            tags$div(style="background-color:#2C3544 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("MANAGEMENT CONTEXT"))),
-                            p("The Central Gulf of Alaska Rockfish Program (Rockfish Program) was implemented in 2012
+  bslib::nav_menu(
+    title = "CGOA Rockfish", value = "cgoa_rock",
+    bslib::nav_panel(
+      "About", value = "cgoa_rock_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        bslib::card(
+          fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
+          includeHTML(path = "./www/cgoa_rock_page_new.html")),
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style="background-color:#2C3544 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("MANAGEMENT CONTEXT"))),
+          p("The Central Gulf of Alaska Rockfish Program (Rockfish Program) was implemented in 2012
                                           is a ten year extension of a pilot program that ran from 2007-2011 under similar regulations.
                                           In 2021, the Rockfish Program was reauthorized without an expiration date. Prior to 2007, the fishery 
                                           operated under the License Limitation Program (LLP). The Rockfish
@@ -739,7 +795,7 @@ ui <- bslib::page_navbar(
                                           thornyhead rockfish. The rockfish program also includes a small entry level longline fishery, but
                                           vessels participating in the entry level longline fishery are not eligible to join cooperatives, are not
                                           allocated exclusive harvest privileges, and therefore do not hold quota share."),
-                            p("The Rockfish Program was designed to improve resource conservation and improve economic efficiency
+          p("The Rockfish Program was designed to improve resource conservation and improve economic efficiency
                                           by establishing cooperatives that receive exclusive harvest privileges. The four goals of the program
                                           are to 1) reduce bycatch and discards; 2) encourage conservation-minded practices; 3) improve
                                           product quality and value; and 4) provide stability to the processing labor force. The Rockfish
@@ -747,7 +803,7 @@ ui <- bslib::page_navbar(
                                           shoreside processors in Kodiak, AK. These CVs are not required to deliver to the processor with
                                           which their cooperative has formed an association but the processor must be located in Kodiak, AK. This allows shoreside processors in Kodiak to
                                           better time deliveries of rockfish and salmon in the summer months."),
-                            p("The Rockfish Program includes a cost recovery provision whereby the fishermen are assessed a fee
+          p("The Rockfish Program includes a cost recovery provision whereby the fishermen are assessed a fee
                                           based on the cost to the government to manage the program. The costs that can be recovered
                                           include the costs related to management, data collection, and enforcement of a Limited Access
                                           Privilege Program (LAPP) or Community Development Quota Program, and cannot exceed 3% of
@@ -757,9 +813,10 @@ ui <- bslib::page_navbar(
                                           participants using trawl gear. Cost recovery fees are not assessed for harvests of Rockfish Program
                                           species by participants in the limited entry longline fishery because they do not receive an exclusive
                                           harvest privilege. In 2020, 2023, and 2024, the Rockfish Program fee reached the 3% statutory cap."),
-                            tags$div(style="background-color:#2C3544 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
-                                     tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
-                            p("Rockfish Program quota share (QS) are allocated to eligible LLP license holders, but that LLP
+          tags$div(
+            style="background-color:#2C3544 !important; color: white; padding-top: 7px; padding-bottom: 7px; padding-left: 7px; font-size: 20px",
+            tags$header(strong("CATCH SHARE PRIVILEGE CHARACTERISTICS"))),
+          p("Rockfish Program quota share (QS) are allocated to eligible LLP license holders, but that LLP
                                           license must be assigned to a Rockfish Program cooperative in order to participate in the Rockfish
                                           Program. Cooperative quota (CQ) for Rockfish Program primary species, secondary species, and
                                           halibut PSC is allocated annually to each cooperative based on the QS holdings of its membership.
@@ -770,37 +827,130 @@ ui <- bslib::page_navbar(
                                           to excessive share limits. Catcher vessel cooperatives cannot transfer CQ to CP cooperatives, but
                                           CP cooperatives are allowed to transfer CQ to cooperatives in either sector (with the exception of
                                           rougheye or shortraker rockfish CQ)."),
-                            p("The Rockfish Program allocated revocable shares, initially  authorized until
+          p("The Rockfish Program allocated revocable shares, initially  authorized until
                                           December 31st, 2021 (10 years from the start of the program), but have been reauthorized to indefinite. The Rockfish Program includes
                                           excessive share provisions, which include the following: No person may hold or use more than 4% of
                                           the CV QS and resulting CQ, or 40% of the CP QS and resulting CQ; No vessel may harvest more than 8%
                                           of the CV CQ or 60% of the CP CQ; and no processor may receive or process more than 40% of the
                                           CV CQ.")))),
-                  bslib::nav_panel("Performance Metrics", value = "cgoa_rock_metrics",
+    bslib::nav_panel("Performance Metrics", value = "cgoa_rock_metrics",
                      cgoa_rockfish_ui("cgoa_rockfish")
-           )
+    )
   ),
+  #### pacific cod trawl cooperative -------
+  bslib::nav_menu(
+    title = "Pacific Cod Trawl", 
+    value = "pcod_trawl",
+    bslib::nav_panel(
+      title = "About", 
+      value = "pcod_trawl_about",
+      bslib::layout_columns(
+        col_widths = c(4, 8),
+        # Left Column: Program Info Box
+        bslib::card(
+          fill = FALSE, fillable = FALSE, class = "border-0 shadow-none",
+          includeHTML(path = "./www/pacific_cod_trawl.html")
+        ),
+        
+        bslib::card(
+          fill = FALSE, fillable = FALSE,
+          tags$div(
+            style = "background-color:#83A6A9 !important; color: white; padding: 7px; font-size: 20px; margin-bottom: 15px;",
+            tags$header(strong("MANAGEMENT CONTEXT"))
+          ),
+          tags$p(
+            "The Pacific Cod Trawl Cooperative (PCTC) Program (Amendment 122) was implemented in 2024 to address the increasingly shortened fishing seasons and the 'race to fish' in the Bering Sea and Aleutian Islands (BSAI) trawl catcher vessel (CV) sector. Prior to the program, a steadily decreasing total allowable catch led to highly compressed seasons, which decreased the fishery's value and discouraged practices that minimize bycatch."
+          ),
+          tags$p(
+            "By transitioning to a cooperative-based management system, the program aims to promote safety, increase the value of the fishery, and ensure long-term resource viability. To protect surrounding ecosystems and fisheries, the PCTC Program subjects participants to sideboard limitations to prevent effort expansion into the Gulf of Alaska (GOA). Furthermore, the program features strict ownership caps to prevent consolidation and specific quota set-asides to ensure the sustained participation of Aleutian Island fishery-dependent communities."
+          ),
+          
+          tags$br(),
+          
+          tags$div(
+            style = "background-color:#83A6A9 !important; color: white; padding: 7px; font-size: 20px; margin-bottom: 15px;",
+            tags$header(strong("CATCH-SHARE PRIVILEGE CHARACTERISTICS"))
+          ),
+          tags$p(
+            "The PCTC is a limited access privilege program with the following defining characteristics:"
+          ),
+          tags$ul(
+            tags$li(
+              tags$b("Historical Allocation & Split: "), 
+              "Harvest quota shares (QS) are assigned based on legal landings from 2009 to 2019 (2004–2009 for AI endorsements). The total Cooperative Quota pool is strictly split: 77.5% is derived from QS issued to harvester LLP licenses, and 22.5% is derived from QS issued to processors."
+            ),
+            tags$li(
+              tags$b("Cooperative Formation: "), 
+              "QS holders must join a cooperative to fish. A cooperative must consist of at least three LLP licenses in association with at least one licensed processor. NMFS issues the aggregate QS as exclusive Cooperative Quota (CQ) each year."
+            ),
+            tags$li(
+              tags$b("Seasonal Apportionment: "), 
+              "CQ is allocated exclusively for the A season (Jan 20 - Apr 1) and B season (Apr 1 - Jun 10). The C season remains a limited access fishery open to all trawl catcher vessels with BSAI endorsements."
+            ),
+            tags$li(
+              tags$b("Ownership & Use Caps: "), 
+              "To prevent excessive consolidation, no person may hold more than 5% of harvester QS or 20% of processor QS. Similarly, no single vessel may harvest more than 5% of the annual CQ, and no single company may process more than 20% of the annual CQ."
+            ),
+            tags$li(
+              tags$b("Community Protections: "), 
+              "To support regional economies, cooperatives are required to collectively set aside 12% of the A-season CQ specifically for delivery to Aleutian Islands shoreplants."
+            ),
+            tags$li(
+              tags$b("Bycatch Management: "), 
+              "Halibut and crab Prohibited Species Catch (PSC) limits are structurally reduced and allocated directly to cooperatives for strict accountability. Specifically, the PCTC program mandated a reduction of the halibut PSC limit by 12.5% in 2024 and 25% in 2025."
+            )
+          )
+        )
+      )
+    ),
+    
+    bslib::nav_panel(
+      # Add a warning badge directly to the tab title
+      title = htmltools::tagList(
+        "Performance Metrics",
+        tags$span(class = "badge bg-warning text-dark ms-2", "Coming Soon")
+      ), 
+      value = "pcod_trawl_metrics",
+      
+      # Build a polished "Empty State" card for the content
+      bslib::card(
+        class = "text-center py-5 mt-4 border-0 bg-light",
+        tags$div(
+          # Adds a construction cone icon (requires bsicons package)
+          bsicons::bs_icon("cone-striped", size = "4rem", class = "text-warning mb-3"),
+          tags$h3("Under Construction", class = "text-secondary"),
+          tags$p(
+            class = "text-muted",
+            "We are currently gathering and analyzing the data for the new Pacific Cod Trawl program. Please check back soon!"
+          )
+        )
+      )
+    )
+  ),
+  
   ### non catch share home-------
-  bslib::nav_menu(title = "Non-Catch Share Metrics", value = "non_catch",
-                  bslib::nav_panel("About", value = "non_catch_about",
-                     tags$div(class = "background",
-                              div(class = "title-container",
-                                  "Performance Metrics for North Pacific Non-Catch Share Programs"),
-                              div(class = "image-row",
-                                  tags$img(src = "goa_othr_rock.png", 
-                                           style = "cursor:pointer;",
-                                           onclick = "Shiny.setInputValue('goa_othr_img_clicked', true);"),
-                                  tags$img(src = "scallop_pic.png", 
-                                           style = "cursor:pointer;",
-                                           onclick = "Shiny.setInputValue('scallop_img_clicked', true);"),
-                                  tags$img(src = "longliners_pic.png", 
-                                           style = "cursor:pointer;",
-                                           onclick = "Shiny.setInputValue('cgoa_img_clicked', true);"),
-                              )),
-                     div(class = "wrap-section",
-                         tags$img(src = "non_cs_fishing.jpg", class = "wrap-image-left"),
-                         div(class = "wrap-header-left", h4("ABOUT NON-CATCH SHARE PROGRAMS")),
-                         p("Catch share programs are a fishery management tool that allocates a secure
+  bslib::nav_menu(
+    title = "Non-Catch Share Metrics", value = "non_catch",
+    bslib::nav_panel(
+      "About", value = "non_catch_about",
+      tags$div(class = "background",
+               div(class = "title-container",
+                   "Performance Metrics for North Pacific Non-Catch Share Programs"),
+               div(class = "image-row",
+                   tags$img(src = "goa_othr_rock.png", 
+                            style = "cursor:pointer;",
+                            onclick = "Shiny.setInputValue('goa_othr_img_clicked', true);"),
+                   tags$img(src = "scallop_pic.png", 
+                            style = "cursor:pointer;",
+                            onclick = "Shiny.setInputValue('scallop_img_clicked', true);"),
+                   tags$img(src = "longliners_pic.png", 
+                            style = "cursor:pointer;",
+                            onclick = "Shiny.setInputValue('cgoa_img_clicked', true);"),
+               )),
+      div(class = "wrap-section",
+          tags$img(src = "non_cs_fishing.jpg", class = "wrap-image-left"),
+          div(class = "wrap-header-left", h4("ABOUT NON-CATCH SHARE PROGRAMS")),
+          p("Catch share programs are a fishery management tool that allocates a secure
                            share of the fishery resource to individual fishermen, fishing cooperatives,
                            fishing communities, or other entities to harvest a fixed quantity of fish 
                            each year. Catch shares do not directly impact the total allowable catch (TAC)
@@ -810,11 +960,11 @@ ui <- bslib::page_navbar(
                            programs currently in operation throughout the U.S. This dashboard provides data on 
                            indicators of fishery performance for three selected fisheries not managed on the basis
                            of catch shares, including trends over time."),
-                     ),
-                     div(class = "wrap-section",
-                         tags$img(src = "non_cs_boat2.jpg", class = "wrap-image-right"),
-                         div(class = "wrap-header-right", h4("CATCH SHARE PERFORMANCE METRICS")),
-                         p("This section develops a consistent set of indicators to assess various 
+      ),
+      div(class = "wrap-section",
+          tags$img(src = "non_cs_boat2.jpg", class = "wrap-image-right"),
+          div(class = "wrap-header-right", h4("CATCH SHARE PERFORMANCE METRICS")),
+          p("This section develops a consistent set of indicators to assess various 
                            dimensions of the economic performance of three non-catch share programsin 
                            the Alaska region including Central Gulf of Alaska Rockfish Program, 
                            Alaska Weathervane Scallop Program, as well as one quasi-catch share program, 
@@ -822,65 +972,71 @@ ui <- bslib::page_navbar(
                            by NOAA Fisheries’ regional economists, anthropologists, and sociologists as the most
                            representative indicators of economic performance for which data are available and can
                            be regularly updated and were first summarized in",
-                           tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
-                                  class = "custom-link",
-                                  target = "_blank",
-                                  "Brinson and Thunberg (2013)."),
-                           "These indicators can be broken down into three general categories: 
+            tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
+                   class = "custom-link",
+                   target = "_blank",
+                   "Brinson and Thunberg (2013)."),
+            "These indicators can be broken down into three general categories: 
                            catch and landings, effort, and revenue, and their descriptions are listed in the tables below. "),
-                         tags$a(
-                           href = "https://www.fisheries.noaa.gov/alaska/sustainable-fisheries/catch-share-and-limited-access-programs-alaska",  # Replace with your target link
-                           target = "_blank",         
-                           class = "custom-btn",  
-                           icon("circle-info"),           
-                           "Click here to learn more about these catch share programs"  ,
-                         )
-                     ),
-                     br(),
-                     fluidRow(
-                       bslib::accordion(title = "Indicators", 
-                                 bslib::accordion_panel(title = "Catch & Landings",  #### catch and landing table ------
-                                                        bslib::card(
-                                                          full_screen = TRUE,
-                                                          bslib::card_body(
-                                                            tags$div(tags$fieldset(style= "width: 40%;","The catch and landings metrics are the annual catch limit (ACL) or quota level, aggregate landings,
+          tags$a(
+            href = "https://www.fisheries.noaa.gov/alaska/sustainable-fisheries/catch-share-and-limited-access-programs-alaska",  # Replace with your target link
+            target = "_blank",         
+            class = "custom-btn",  
+            icon("circle-info"),           
+            "Click here to learn more about these catch share programs"  ,
+          )
+      ),
+      br(),
+      fluidRow(
+        bslib::accordion(
+          title = "Indicators", 
+          bslib::accordion_panel(
+            title = "Catch & Landings",  #### catch and landing table ------
+            bslib::card(
+              full_screen = TRUE,
+              bslib::card_body(
+                tags$div(tags$fieldset(
+                  style= "width: 40%;","The catch and landings metrics are the annual catch limit (ACL) or quota level, aggregate landings,
                                                                 the % of the quota that was utilized, as well as whether the ACL or quota was exceeded for any species in the program. While the quota amount is set based on the biological
                                                                 condition of the species in the program, the landings and the percentage of the quota that is landed (% utilization) reflect economic conditions and regulatory constraints of the fishery"),
-                                                                     tags$fieldset(style= "width: 50%; float: right;",
-                                                                                   tags$table(class="styled-table",
-                                                                                              tags$thead(
-                                                                                                tags$tr(
-                                                                                                  tags$th('Indicator'),
-                                                                                                  tags$th('Definition')
-                                                                                                )
-                                                                                              ),
-                                                                                              tags$tbody(
-                                                                                                tags$tr(
-                                                                                                  tags$td('Non-Catch Share Quota)'),
-                                                                                                  tags$td('Annual quota of combined non-catch share program species, in terms of weight.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Aggregate landings'),
-                                                                                                  tags$td('Annual total weight of all species in the fishery landed on trips attributed to the fishery.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Annual Catch Limit (ACL) exceeded '),
-                                                                                                  tags$td('Was the ACL exceeded for any species/stock within the non-catch share fishery? (Y/N)')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Utilization (%)'),
-                                                                                                  tags$td('Portion of target species TAC that is caught ad retained within a fishing year. Landings/Quota attributed to the non-catch share fishery.')
-                                                                                                )
-                                                                                              )
-                                                                                   )
-                                                                     )
-                                                            )
-                                                          ))),
-                                 bslib::accordion_panel("Fishing Effort",  #### fishing effort table ------
-                                                        bslib::card(
-                                                          full_screen = TRUE,
-                                                          bslib::card_body(
-                                                            tags$div(tags$fieldset(style= "width: 40%;","The effort metrics are the season length index, the number of active vessels, and the number of entities 
+                  tags$fieldset(style= "width: 50%; float: right;",
+                                tags$table(class="styled-table",
+                                           tags$thead(
+                                             tags$tr(
+                                               tags$th('Indicator'),
+                                               tags$th('Definition')
+                                             )
+                                           ),
+                                           tags$tbody(
+                                             tags$tr(
+                                               tags$td('Non-Catch Share Quota)'),
+                                               tags$td('Annual quota of combined non-catch share program species, in terms of weight.')
+                                             ),
+                                             tags$tr(
+                                               tags$td('Aggregate landings'),
+                                               tags$td('Annual total weight of all species in the fishery landed on trips attributed to the fishery.')
+                                             ),
+                                             tags$tr(
+                                               tags$td('Annual Catch Limit (ACL) exceeded '),
+                                               tags$td('Was the ACL exceeded for any species/stock within the non-catch share fishery? (Y/N)')
+                                             ),
+                                             tags$tr(
+                                               tags$td('Utilization (%)'),
+                                               tags$td('Portion of target species TAC that is caught ad retained within a fishing year. Landings/Quota attributed to the non-catch share fishery.')
+                                             )
+                                           )
+                                )
+                  )
+                )
+              ))),
+          bslib::accordion_panel(
+            "Fishing Effort",  #### fishing effort table ------
+            bslib::card(
+              full_screen = TRUE,
+              bslib::card_body(
+                tags$div(
+                  tags$fieldset(
+                    style= "width: 40%;","The effort metrics are the season length index, the number of active vessels, and the number of entities 
                                                                holding share, trips, and days at sea. The season length index is defined as the number of days in which at least one vessel was fishing divided
                                                                by the number of days in the regulatory fishing season. This index provides a single, unit-less metric of season length 
                                                                that can be aggregated over multiple areas or species with different season lengths within the same program. The index 
@@ -891,53 +1047,57 @@ ui <- bslib::page_navbar(
                                                                indicate changes in the expansion or consolidation of vessels in the fishery after rationalization. The number of 
                                                                entities holding share reflects the number of quota share owners that may be reduced as a result of consolidation or 
                                                                increase with new entrants over time and indicates the level of ownership accumulation in the fishery"),
-                                                                     tags$fieldset(style= "width: 50%; float: right;",
-                                                                                   tags$table(class="styled-table",
-                                                                                              tags$thead(
-                                                                                                tags$tr(
-                                                                                                  tags$th('Indicator'),
-                                                                                                  tags$th('Definition')
-                                                                                                )
-                                                                                              ),
-                                                                                              tags$tbody(
-                                                                                                tags$tr(
-                                                                                                  tags$td('Season length'),
-                                                                                                  tags$td('Number of days the fishery is open in a given year.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Active vessels'),
-                                                                                                  tags$td('Annual number of vessels that fish quota and landing one or more pounds of any catch share program species.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Number of permits'),
-                                                                                                  tags$td('Number of uniquely permitted vessels for the fishery at a given point in a year.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Trips'),
-                                                                                                  tags$td('Number of trips attributed to the fishery in a given year')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Days at sea'),
-                                                                                                  tags$td('Number of days absent on trips attributed to the fishery in a given year.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Limited entry'),
-                                                                                                  tags$td('Is the non-catch share fishery under a limited entry program? (Y/N)')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Limited entry components'),
-                                                                                                  tags$td('List the components of the fishery that are under a limited entry program.')
-                                                                                                )
-                                                                                              )
-                                                                                   )
-                                                                     )
-                                                            )
-                                                          ))),
-                                 bslib::accordion_panel(title = "Landing Revenue", #### landing revenue table ------
-                                                        bslib::card(
-                                                          full_screen = TRUE,
-                                                          bslib::card_body( 
-                                                            tags$div(tags$fieldset(style= "width: 40%;","The revenue metrics are the aggregate revenue from catch share species, average prices of non-catch share species, 
+                  tags$fieldset(
+                    style= "width: 50%; float: right;",
+                    tags$table(class="styled-table",
+                               tags$thead(
+                                 tags$tr(
+                                   tags$th('Indicator'),
+                                   tags$th('Definition')
+                                 )
+                               ),
+                               tags$tbody(
+                                 tags$tr(
+                                   tags$td('Season length'),
+                                   tags$td('Number of days the fishery is open in a given year.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Active vessels'),
+                                   tags$td('Annual number of vessels that fish quota and landing one or more pounds of any catch share program species.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Number of permits'),
+                                   tags$td('Number of uniquely permitted vessels for the fishery at a given point in a year.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Trips'),
+                                   tags$td('Number of trips attributed to the fishery in a given year')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Days at sea'),
+                                   tags$td('Number of days absent on trips attributed to the fishery in a given year.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Limited entry'),
+                                   tags$td('Is the non-catch share fishery under a limited entry program? (Y/N)')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Limited entry components'),
+                                   tags$td('List the components of the fishery that are under a limited entry program.')
+                                 )
+                               )
+                    )
+                  )
+                )
+              ))),
+          bslib::accordion_panel(
+            title = "Landing Revenue", #### landing revenue table ------
+            bslib::card(
+              full_screen = TRUE,
+              bslib::card_body( 
+                tags$div(
+                  tags$fieldset(
+                    style= "width: 40%;","The revenue metrics are the aggregate revenue from catch share species, average prices of non-catch share species, 
                                                              the revenue per active vessel, trip, and day at sea, and the Gini coefficient. Revenues are a function of landings and prices, which may 
                                                              trend in opposite directions due to changes in the demand for the species that may or may not be caused by the 
                                                              movement to catch share management. Prices may be affected by catch share management, but they are also influenced
@@ -947,103 +1107,108 @@ ui <- bslib::page_navbar(
                                                              coefficient is a measure of the evenness of the distribution of revenue among the active vessels, which increases 
                                                              as revenues become more concentrated on fewer vessels, and is useful to examine the distributional impacts of catch
                                                              share programs across vessels"),
-                                                                     tags$fieldset(style= "width: 50%; float: right;",
-                                                                                   tags$table(class="styled-table",
-                                                                                              tags$thead(
-                                                                                                tags$tr(
-                                                                                                  tags$th('Indicator'),
-                                                                                                  tags$th('Definition')
-                                                                                                )
-                                                                                              ),
-                                                                                              tags$tbody(
-                                                                                                tags$tr(
-                                                                                                  tags$td('Fishery species revenue'),
-                                                                                                  tags$td('Aggregate ex-vessel revenue from species in the fishery landed on trips attributed to the fishery in a given year.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Other species revenue'),
-                                                                                                  tags$td('Aggregate ex-vessel revenue from species not in the fishery landed on trips attributed to the fishery in a given year.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Average price'),
-                                                                                                  tags$td('Aggregate revenue from species in the fishery landed on trips attributed to the fishery, divided by aggregate landings')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Revenue per active vessel'),
-                                                                                                  tags$td('Aggregate revenue divided by active vessels')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Revenue per trip'),
-                                                                                                  tags$td('Aggregate revenue divided by trip')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Revenue per day at sea'),
-                                                                                                  tags$td('Aggregate revenue divided by day at sea')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Gini Coefficient'),
-                                                                                                  tags$td('A measure of the evenness of the distribution of revenue among the 
+                  tags$fieldset(
+                    style= "width: 50%; float: right;",
+                    tags$table(class="styled-table",
+                               tags$thead(
+                                 tags$tr(
+                                   tags$th('Indicator'),
+                                   tags$th('Definition')
+                                 )
+                               ),
+                               tags$tbody(
+                                 tags$tr(
+                                   tags$td('Fishery species revenue'),
+                                   tags$td('Aggregate ex-vessel revenue from species in the fishery landed on trips attributed to the fishery in a given year.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Other species revenue'),
+                                   tags$td('Aggregate ex-vessel revenue from species not in the fishery landed on trips attributed to the fishery in a given year.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Average price'),
+                                   tags$td('Aggregate revenue from species in the fishery landed on trips attributed to the fishery, divided by aggregate landings')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Revenue per active vessel'),
+                                   tags$td('Aggregate revenue divided by active vessels')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Revenue per trip'),
+                                   tags$td('Aggregate revenue divided by trip')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Revenue per day at sea'),
+                                   tags$td('Aggregate revenue divided by day at sea')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Gini Coefficient'),
+                                   tags$td('A measure of the evenness of the distribution of revenue among the 
                                                                                 active vessels. The Gini coefficient increases as
                                                                                 revenues become more concentrated on fewer vessels.')
-                                                                                                )
-                                                                                              )
-                                                                                   )
-                                                                     )
-                                                            )
-                                                          ))),
-                                 bslib::accordion_panel("Other", #### other table ------
-                                                        bslib::card(
-                                                          full_screen = TRUE,
-                                                          bslib::card_body(  
-                                                            tags$div(tags$fieldset(style= "width: 40%;","Depending on the program, other metrics are calculated that may be beneficial when determining the current status of the non-catch share fisheries.  
-                                                                                 The other metrics and their descriptions can be found here."),
-                                                                     tags$fieldset(style= "width: 50%; float: right;",
-                                                                                   tags$table(class="styled-table",
-                                                                                              tags$thead(
-                                                                                                tags$tr(
-                                                                                                  tags$th('Indicator'),
-                                                                                                  tags$th('Definition')
-                                                                                                )
-                                                                                              ),
-                                                                                              tags$tbody(
-                                                                                                tags$tr(
-                                                                                                  tags$td('Cost recovery fee'),
-                                                                                                  tags$td('Amount collected for cost recovery.')
-                                                                                                ),
-                                                                                                tags$tr(
-                                                                                                  tags$td('Share cap in place (Y/N) '),
-                                                                                                  tags$td('An ownership share and/or allocation cap is any measure consistent with the MSA LAPP purpose
-                                                                                                    and intent whether or not the catch share program is required to have an excessive share cap. Y/N')
-                                                                                                ),
-                                                                                                
-                                                                                              )
-                                                                                   )
-                                                                     )
-                                                            )
-                                                          ))))),
-                     br(),
-                     column(width=12,
-                            tags$div(class = 'wrap-section',
-                                     tags$img(src = "non_cs_fish.jpg",  class="wrap-image-left"),
-                                     tags$div(class = 'wrap-header-left',
-                                              h4(paste0("PERCENTAGE CHANGE FOR ", current_yr-1," TO ",  current_yr))),
-                                     bslib::card(  class = "border-0 shadow-none", tableOutput("non_cs_percent_tbl")),
-                            )),
-                     br()
-           ),
-           ### non catch share tabs-------
-           #### scallops -------
-           bslib::nav_panel("Scallops", value = "scallop_metrics",
+                                 )
+                               )
+                    )
+                  )
+                )
+              ))),
+          bslib::accordion_panel(
+            "Other", #### other table ------
+            bslib::card(
+              full_screen = TRUE,
+              bslib::card_body(  
+                tags$div(
+                  tags$fieldset(
+                    style= "width: 40%;","Depending on the program, other metrics are calculated that may be beneficial when determining the current status of the non-catch share fisheries.  
+                                         The other metrics and their descriptions can be found here."),
+                  tags$fieldset(
+                    style= "width: 50%; float: right;",
+                    tags$table(class="styled-table",
+                               tags$thead(
+                                 tags$tr(
+                                   tags$th('Indicator'),
+                                   tags$th('Definition')
+                                 )
+                               ),
+                               tags$tbody(
+                                 tags$tr(
+                                   tags$td('Cost recovery fee'),
+                                   tags$td('Amount collected for cost recovery.')
+                                 ),
+                                 tags$tr(
+                                   tags$td('Share cap in place (Y/N) '),
+                                   tags$td('An ownership share and/or allocation cap is any measure consistent with the MSA LAPP purpose
+                                           and intent whether or not the catch share program is required to have an excessive share cap. Y/N')
+                                 ),
+                                 
+                               )
+                    )
+                  )
+                )
+              ))))),
+      br(),
+      column(width=12,
+             tags$div(class = 'wrap-section',
+                      tags$img(src = "non_cs_fish.jpg",  class="wrap-image-left"),
+                      tags$div(class = 'wrap-header-left',
+                               h4(paste0("PERCENTAGE CHANGE FOR ", current_yr-1," TO ",  current_yr))),
+                      bslib::card(  class = "border-0 shadow-none", tableOutput("non_cs_percent_tbl")),
+             )),
+      br()
+    ),
+    ### non catch share tabs-------
+    #### scallops -------
+    bslib::nav_panel("Scallops", value = "scallop_metrics",
                      scallops_ui("scallops")
-           ),
-           #### goa other rockfish  ----------
-           bslib::nav_panel("GOA Other Rockfish", value = "goa_rock_metrics",
+    ),
+    #### goa other rockfish  ----------
+    bslib::nav_panel("GOA Other Rockfish", value = "goa_rock_metrics",
                      rockfish_ui("rockfish")
-           ),
-           #### bsai longliners ------
-           bslib::nav_panel("BSAI Longliners", value = "flbsai_metrics",
+    ),
+    #### bsai longliners ------
+    bslib::nav_panel("BSAI Longliners", value = "flbsai_metrics",
                      flbsai_pcod_ui("flbsai_pcod")
-           )
+    )
   ),
   ## data resources ----
   nav_panel(title = "Resources",
@@ -1063,61 +1228,61 @@ ui <- bslib::page_navbar(
                        target = "_blank",  
                        "Alaska Department of Fish & Game. Commercial Operators Annual Report. Data compiled by AKFIN in Comprehensive_ENCOAR_BUY and Comprehensive_ENCOAR_PROD."
                 )
-                ),
-                tags$li(
-                  tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
-                         class = "custom-link",
-                         target = "_blank", 
-                         "Brinson, A. A., & Thunberg, E.M. (2013). The economic performance of U.S. catch share programs (NOAA Technical Memorandum NMFS‑F/SPO 133a) [PDF].
+              ),
+              tags$li(
+                tags$a(href = "https://repository.library.noaa.gov/view/noaa/4601",
+                       class = "custom-link",
+                       target = "_blank", 
+                       "Brinson, A. A., & Thunberg, E.M. (2013). The economic performance of U.S. catch share programs (NOAA Technical Memorandum NMFS‑F/SPO 133a) [PDF].
                           U.S. Department of Commerce, National Marine Fisheries Service. Retrieved from NOAA Institutional Repository."  )
-                  ),
-                  tags$li(
-                    tags$a(href = "https://www.fisheries.noaa.gov/inport/item/21987",
-                           class = "custom-link",
-                           target = "_blank",  
-                "NOAA Fisheries Alaska Region. At-Sea Groundfish Production Reports. Data compiled by AKFIN in Comprehensive_WPR."
+              ),
+              tags$li(
+                tags$a(href = "https://www.fisheries.noaa.gov/inport/item/21987",
+                       class = "custom-link",
+                       target = "_blank",  
+                       "NOAA Fisheries Alaska Region. At-Sea Groundfish Production Reports. Data compiled by AKFIN in Comprehensive_WPR."
                 )
-                ),
+              ),
               tags$li(
                 tags$a(href = "https://www.fisheries.noaa.gov/alaska/commercial-fishing/cost-recovery-programs-fee-collection-and-fee-payment-alaska",
                        class = "custom-link",
                        target = "_blank", 
-                "NOAA Fisheries Alaska Region. Cost recovery data. Data provided by AKFIN."
+                       "NOAA Fisheries Alaska Region. Cost recovery data. Data provided by AKFIN."
                 )
               ),
               tags$li(
                 tags$a(href = "https://www.fisheries.noaa.gov/alaska/sustainable-fisheries/alaska-catch-accounting-system",
                        class = "custom-link",
                        target = "_blank", 
-                "NOAA Fisheries Alaska Region. Groundfish Catch Accounting System. Data compiled by AKFIN in Comprehensive_BLEND_CA.")
+                       "NOAA Fisheries Alaska Region. Groundfish Catch Accounting System. Data compiled by AKFIN in Comprehensive_BLEND_CA.")
               ),
               tags$li(
                 tags$a(href = "https://www.fisheries.noaa.gov/permit/alaska-ifq-halibut-sablefish-and-cdq-halibut-program-fishery-applications-and-reporting",
                        class = "custom-link",
                        target = "_blank",  
-                "NOAA Fisheries Alaska Region. IFQ Accounting System. Data provided by AKFIN."
+                       "NOAA Fisheries Alaska Region. IFQ Accounting System. Data provided by AKFIN."
                 )
               ),
               tags$li(
                 tags$a(href = "https://www.fisheries.noaa.gov/alaska/commercial-fishing/permits-and-licenses-issued-alaska.",
                        class = "custom-link",
                        target = "_blank", 
-                "NOAA Fisheries Alaska Region. Permits and Licenses Issued in Alaska. Data provided by AKFIN and additionally accessed at https://www.fisheries.noaa.gov/alaska/commercial-fishing/permits-and-licenses-issued-alaska."
+                       "NOAA Fisheries Alaska Region. Permits and Licenses Issued in Alaska. Data provided by AKFIN and additionally accessed at https://www.fisheries.noaa.gov/alaska/commercial-fishing/permits-and-licenses-issued-alaska."
                 )
               ),
               tags$li(
                 tags$a(href = " https://alaskafisheries.noaa.gov/status-of-fisheries/",
                        class = "custom-link",
                        target = "_blank", 
-                "NOAA Fisheries Alaska Region. Status of Fisheries 2013-Present."
+                       "NOAA Fisheries Alaska Region. Status of Fisheries 2013-Present."
                 )
               ),
               tags$li(
                 tags$a(href = "https://meetings.npfmc.org/CommentReview/DownloadFile?p=9c98c730-537c-4367-9bad-9c982662ceed.pdf&fileName=Scallop%20SAFE%202024%20(REVISED).pdf",
                        class = "custom-link",
                        target = "_blank", 
-                "North Pacific Fishery Management Council. (2024). Scallop Stock Assessment and Fishery Evaluation (SAFE) report (Revised)."),
-            )
+                       "North Pacific Fishery Management Council. (2024). Scallop Stock Assessment and Fishery Evaluation (SAFE) report (Revised)."),
+              )
             ))
   
 )
@@ -1145,6 +1310,11 @@ server <- function(input, output, session) {
   observeEvent(input$cgoa_img_clicked, {
     updateTabsetPanel(session, "tabs", selected = "cgoa_rock_about")
   })
+  
+  observeEvent(input$pcod_img_clicked, {
+    updateTabsetPanel(session, "tabs", selected = "pcod_trawl_about")
+  })
+  
   observeEvent(input$goa_othr_img_clicked, {
     updateTabsetPanel(session, "tabs", selected = "goa_rock_metrics")
   })
@@ -1155,18 +1325,22 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "tabs", selected = "flbsai_metrics")
   })
   
+  
+  
   ## catch share server items ----------------------------
   ### catch share percent data frame -------
   cs_pct_tbl <- reactive({
     rbind(data$afa_pct, data$a80_pct, data$hal_pct, data$cgoa_rock_pct,  data$crab_pct) %>% 
       rename("Catch Share Program" = species) %>%  
+      # rename("Gini*" = "Gini") %>% 
       pivot_longer(., -c("Catch Share Program")) %>% 
       pivot_wider(., names_from = c("name"), values_from = "value") %>% 
       mutate(across(c(8:10), ~ as.character(.))) %>% 
       full_join(., data$sab_pct) %>% 
+      # rename("Gini*" = "Gini") %>% 
       mutate(`Catch Share Program` = str_replace_all(`Catch Share Program`, "_", " "))
-      
-   
+    
+    
   })
   
   ### catch share percent table -------
@@ -1182,7 +1356,7 @@ server <- function(input, output, session) {
     #  footnote(symbol = "Color scheme is reversed to indicate that increases in the Gini reflect increases in inequality of revenues across vessels.")
     
   }
- 
+  
   
   ### A80 -------------------------------------------------------------------------------------------------
   
@@ -1193,47 +1367,47 @@ server <- function(input, output, session) {
   
   
   ### Halibut ------------------------------------------------------------------------------------------
-
+  
   halibut_server("halibut", data$hal_joined, data$hal_acl_plot,
                  data$hal_ent_plot, data$hal_utilz_plot, data$hal_eff_plot,
                  data$hal_rev_plot, data$hal_gini_plot, data$hal_rev_per_plot)
-
+  
   ### Crab -------------------------------------------------------------------------------------------------
-
+  
   crab_server("crab", data$crab_joined, data$crab_acl_plot,
               data$crab_ent_plot, data$crab_utilz_plot, data$crab_eff_plot,
               data$crab_rev_plot, data$crab_gini_plot, data$crab_rev_per_plot)
-
+  
   ### AFA ---------------------------------------------------------------------------------------------------
-
+  
   afa_server("afa", data$afa_joined, data$afa_acl_plot_All, data$afa_acl_plot_CP,  data$afa_acl_plot_CV,
              data$afa_ent_plot, data$afa_utilz_plot, data$afa_eff_plot, data$afa_rev_plot_All, 
              data$afa_rev_plot_CP, data$afa_rev_plot_CV, data$afa_gini_plot_All, data$afa_gini_plot_CP,
              data$afa_gini_plot_CV, data$afa_rev_per_plot)
-
-
+  
+  
   ### Sablefish ---------------------------------------------------------------------------------------------
-
+  
   sablefish_server("sablefish", data$sab_joined, data$sab_plot_df, data$sab_acl_plot_All, data$sab_acl_plot_CP,  
                    data$sab_acl_plot_CV, data$sab_ent_plot, data$sab_utilz_plot,
                    data$sab_eff_plot, data$sab_rev_plot_All, data$sab_rev_plot_CP, data$sab_rev_plot_CV,
                    data$sab_gini_plot_All, data$sab_gini_plot_CP, data$sab_gini_plot_CV,
                    data$sab_rev_per_plot)
-
-
+  
+  
   ### CGOA Rockfish ------------------------------------------------------------------------------------------
-
+  
   cgoa_rockfish_server("cgoa_rockfish",data$cgoa_rock_joined, data$cgoa_rock_acl_plot_All, data$cgoa_rock_acl_plot_CP,
                        data$cgoa_rock_acl_plot_CV, data$cgoa_rock_ent_plot, data$cgoa_rock_utilz_plot,
                        data$cgoa_rock_eff_plot, data$cgoa_rock_rev_plot_All, data$cgoa_rock_rev_plot_CP,
                        data$cgoa_rock_rev_plot_CV, data$cgoa_rock_gini_plot_All, data$cgoa_rock_gini_plot_CP, 
                        data$cgoa_rock_gini_plot_CV,data$cgoa_rock_rev_per_plot)
-
+  
   ## non-catch share server items --------------------------------------------------
-
+  
   ### Non-catch share percent change table-----------------------------------------------------------------------
   non_cs_pct_tbl <- reactive({
-    rbind(data$scallop_pct, data$flbsai_pct, data$rock_pct) %>% 
+    df <-  rbind(data$scallop_pct, data$flbsai_pct, data$rock_pct) %>% 
       mutate(species = str_replace_all(species, "_", " ")) %>%
       rename("Non-Catch Share Program" = species) %>%
       mutate(across(everything(), ~ as.character(.)) ) %>% 
@@ -1243,7 +1417,7 @@ server <- function(input, output, session) {
       mutate(across(everything(), ~ifelse(is.na(.), "-", .)))
     
   })
-
+  
   #### non-catch share percent table
   output$non_cs_percent_tbl <- function() {
     non_cs_pct_tbl() %>%
@@ -1253,30 +1427,30 @@ server <- function(input, output, session) {
       column_spec(1, width = "3cm", bold = TRUE) %>%
       column_spec(2:4, width = "2cm") %>%
       footnote(symbol = "Most recent year wholesale revenue data not available.")
-
+    
   }
-
+  
   ### Scallops ------------------------------------------------------------------------------------------
-
+  
   scallop_server("scallops", data$scallop_joined,data$scallop_plot_df, data$scallop_acl_plot,
                  data$scallop_ent_plot, data$scallop_utilz_plot, data$scallop_eff_plot,
                  data$scallop_rev_plot, data$scallop_gini_plot, data$scallop_rev_per_plot)
-
-
+  
+  
   ### Rockfish ------------------------------------------------------------------------------------------
-
+  
   rockfish_server("rockfish", data$rock_joined, data$rock_plot_df, data$rock_acl_plot,
                   data$rock_ent_plot, data$rock_utilz_plot, data$rock_eff_plot, data$rock_rev_plot,
                   data$rock_gini_plot, data$rock_rev_per_plot)
-
-
+  
+  
   ### FL BSAI Pacific Cod ------------------------------------------------------------------------------------------
-
+  
   flbsai_pcod_server("flbsai_pcod", data$flbsai_joined, data$flbsai_plot_df, data$flbsai_acl_plot,
                      data$flbsai_ent_plot, data$flbsai_utilz_plot, data$flbsai_eff_plot, 
                      data$flbsai_rev_plot, data$flbsai_gini_plot, data$flbsai_rev_per_plot)
-
- }
+  
+}
 
 ## Run the application --------------------------------------------------------------------------------------------------------------------------------------------------------
 shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))

@@ -8,14 +8,13 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
     
     ns <- session$ns
     
-   
-    
     ## ---------------------------------------------------------------------------------------------------
-    ## Sablefish Plots
+    ## Sablefish Data Reactives
     ## --------------------------------------------------------------------------------------------------
-    sablefish_final_metrics <- reactive({
-      
-      sablefish_final_metrics <- sab_joined %>% 
+    
+    # 1. BASE FORMATTED DATA (Long format, ALL Sectors) - Used for the Modal
+    sablefish_base_formatted <- reactive({
+      sab_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season", "sector"), names_to = "varname", values_to = "Value") %>% 
@@ -37,64 +36,71 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
         mutate(varname = case_when(varname == "Aggregate Landings" ~ "Aggregate Landings (lbs)",
                                    varname == "Quota allocated to CS program" ~ "Quota allocated to CS program (lbs)",
                                    varname == "Average price" ~ "Average price ($/lbs)",
-                                   TRUE ~ varname)) %>% 
+                                   TRUE ~ varname))
+    })
+    
+    # 2. MAIN UI FILTERED METRICS (Pivoted, Filtered by Sector) - Used for UI Dropdowns
+    sablefish_final_metrics <- reactive({
+      sablefish_base_formatted() %>% 
         pivot_wider(., names_from = "Season", values_from = "Value") %>% 
         filter(!if_all(.cols = -c(sector, varname), .fns = ~ .x == "-")) %>% 
         filter(sector == input$sablefish_sector)
-      
     })
     
     observe({
       updatePickerInput(session = session, inputId = "sablefish_varname",
                         choices = unique(sablefish_final_metrics()$varname), 
                         selected = c("Aggregate Landings (lbs)","Aggregate revenue from Catch Share species")) 
-      
-    })
-        
-    sablefish_df_stats <- reactive({
-      
-      
-      sablefish_final_metrics <- sablefish_final_metrics() %>% 
-        filter(varname %in% c(input$sablefish_varname) ) %>% 
-        select(-sector) %>% 
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#46412A",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        ) %>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
     })
     
+    # 3. RENDER MAIN UI TABLE (Uses the smart function)
     output$sablefish_table <- render_gt({
-      expr = sablefish_df_stats()
+      
+      filtered_data <- sablefish_base_formatted() %>%
+        filter(sector == input$sablefish_sector)
+      
+      build_metrics_gt(
+        cleaned_data = filtered_data,
+        selected_vars = input$sablefish_varname,
+        header_bg = "#46412A" # Sablefish Color
+      )
     })
     
-    sablefish_csv<-reactive(sab_joined)
+    ## ---------------------------------------------------------------------------------------------------
+    ## PREVIEW MODAL LOGIC
+    ## --------------------------------------------------------------------------------------------------
     
-    output$sablefish_csv<-downloadHandler(
+    # Trigger Modal
+    observeEvent(input$sablefish_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "sablefish_preview_table", 
+        download_id = "sablefish_download_csv",
+        title = "Sablefish Full Dataset Preview"
+      )
+    })
+    
+    # Render Modal Table using the UNFILTERED base data (All Sectors)
+    output$sablefish_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = sablefish_base_formatted(),
+        header_bg = "#46412A" # Sablefish Color
+      )
+    })
+    
+    # Download Handler for CSV
+    output$sablefish_download_csv <- downloadHandler(
       filename = function() { "sablefish_full_metrics.csv" },
-      
       content = function(file) {
-        write.csv(sablefish_csv(), file)
+        write.csv(sab_joined, file, row.names = FALSE)
       }
     )
     
+    ## ---------------------------------------------------------------------------------------------------
+    ## PLOTS
+    ## --------------------------------------------------------------------------------------------------
+    
     output$sablefish_lands_plot <- renderPlotly({
-      
       if(input$sablefish_lands_sector == "All"){
         sab_acl_plot_All$All
       }else if(input$sablefish_lands_sector == "CP"){
@@ -102,11 +108,9 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
       } else if(input$sablefish_lands_sector == "CV"){
         sab_acl_plot_CV$`Aggregate Landings`
       }  
-      
     })
     
     output$sablefish_hs_plot <- renderPlotly({
-      
       sab_ent_plot
     })
     
@@ -145,7 +149,6 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
       } else if(input$sablefish_effort == "Days at sea" & !is.null(sab_eff_plot$`Days at sea`)){
         sab_eff_plot$`Days at sea` %>% 
           layout(
-            p,
             annotations = list(
               x = 1,  
               y = -0.15,
@@ -167,7 +170,6 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
     })
     
     output$sablefish_rev_plot <- renderPlotly({
-      
       if(input$sablefish_rev_sector == "All"){
         sab_rev_plot_All
       }else if(input$sablefish_rev_sector == "CP"){
@@ -178,7 +180,6 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
     })
     
     output$sablefish_gini_plot <- renderPlotly({
-      
       if(input$sablefish_gini_sector == "All"){
         sab_gini_plot_All
       }else if(input$sablefish_gini_sector == "CP"){
@@ -186,7 +187,6 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
       } else if(input$sablefish_gini_sector == "CV"){
         sab_gini_plot_CV
       }  
-      
     })
     
     output$sablefish_rev_per_plot <- renderPlotly({
@@ -195,9 +195,7 @@ sablefish_server <- function(id,  sab_joined, sab_plot_df, sab_acl_plot_All, sab
       } else if(input$sablefish_rev_per == "Total Revenue/day at sea"& !is.null(sab_rev_per_plot[[2]])){
         sab_rev_per_plot[[2]]
       }
-      
     })
     
   })
-  
 }

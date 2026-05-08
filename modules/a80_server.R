@@ -1,15 +1,14 @@
 a80_server <- function(id, a80_joined, a80_acl_plot,
                        a80_ent_plot, a80_utilz_plot, a80_eff_plot, a80_rev_plot,
-                       a80_gini_plot,a80_rev_per_plot) {
+                       a80_gini_plot, a80_rev_per_plot) {
   
   moduleServer(id, function(input, output, session) {
     
     ns <- session$ns
     
-    
+    # 1. Base Metrics Reactive
     a80_final_metrics <- reactive({
-      
-      a80_final_metrics <- a80_joined %>% 
+      a80_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season"), names_to = "varname", values_to = "Value") %>% 
@@ -33,75 +32,70 @@ a80_server <- function(id, a80_joined, a80_acl_plot,
                                    TRUE ~ varname)) 
     })
     
+    # 2. Update UI Dropdown
     observe({
       updatePickerInput(session = session, inputId = "a80_varname",
                         choices = unique(a80_final_metrics()$varname), 
                         selected = c("Aggregate revenue from Catch Share species",
                                      "Aggregate revenue from non-catch share species",
-                                     "Average Price ($/mt)",
+                                     "Average price ($/mt)",
                                      "Total Revenue/vessel",
                                      "Total Revenue/trip" ,
                                      "Total Revenue/day at sea")) 
     })
     
-    
-    a80_df_stats <- reactive({
-      
-      a80_final_metrics <- a80_final_metrics() %>% 
-        pivot_wider(., names_from = "Season", values_from = "Value")  %>%   
-        filter(varname %in% c(input$a80_varname)) %>% 
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#262626",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        )%>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
-    })
-    
+    # 3. Render the Main Filtered Table (Uses your original build_metrics_gt function)
     output$a80_table <- render_gt({
-      expr = a80_df_stats()
+      build_metrics_gt(
+        cleaned_data = a80_final_metrics(), 
+        selected_vars = input$a80_varname,
+        header_bg = "#1E293B"
+      )
     })
     
-    a80_csv<-reactive(a80_joined)
+    # -----------------------------------------------------
+    # PREVIEW MODAL LOGIC
+    # -----------------------------------------------------
     
-    output$a80_csv<-downloadHandler(
+    # 4. Trigger Modal
+    observeEvent(input$a80_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "a80_preview_table", 
+        download_id = "a80_download_csv",
+        title = "A80 Full Dataset Preview"
+      )
+    })
+    
+    # 5. Render Modal Table
+    output$a80_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = a80_final_metrics(),
+        header_bg = "#1E293B" # Replace with your specific A80 color hex
+      )
+    })
+    
+    # 6. Download Handler for CSV
+    output$a80_download_csv <- downloadHandler(
       filename = function() { "a80_full_metrics.csv" },
-      
       content = function(file) {
-        write.csv(a80_csv(), file)
+        write.csv(a80_joined, file, row.names = FALSE)
       }
     )
     
+    # -----------------------------------------------------
+    # PLOTS
+    # -----------------------------------------------------
     
     output$a80_lands_plot <- renderPlotly({
-      
-      
       if(length(input$a80_lands) > 1){
         a80_acl_plot$All
-      }else if(input$a80_lands == "Aggregate Landings"){
+      } else if(input$a80_lands == "Aggregate Landings"){
         a80_acl_plot$`Aggregate Landings`
-        
       } else if(input$a80_lands == "Quota allocated to CS program"){
         a80_acl_plot$`Quota allocated to CS program`
-        
       }
-      
     })
-    
     
     output$a80_hs_plot <- renderPlotly({
       a80_ent_plot
@@ -112,13 +106,11 @@ a80_server <- function(id, a80_joined, a80_acl_plot,
     })
     
     output$a80_effort_plot <- renderPlotly({
-      
-      if(input$a80_effort == "Active vessels"& !is.null(a80_eff_plot[2])){
+      if(input$a80_effort == "Active vessels" & !is.null(a80_eff_plot[["Active vessels"]])){
         a80_eff_plot$`Active vessels`
-      } else if(input$a80_effort == "Days at sea"& !is.null(a80_eff_plot[3])){
+      } else if(input$a80_effort == "Days at sea" & !is.null(a80_eff_plot[["Days at sea"]])){
         a80_eff_plot$`Days at sea`
-      
-      } else if(input$a80_effort == "Season length" & !is.null(a80_eff_plot[1])){
+      } else if(input$a80_effort == "Season length" & !is.null(a80_eff_plot[["Season length"]])){
         a80_eff_plot$`Season length`
       } 
     })
@@ -132,15 +124,12 @@ a80_server <- function(id, a80_joined, a80_acl_plot,
     })
     
     output$a80_rev_per_plot <- renderPlotly({
-      if(input$a80_rev_per == "Total Revenue/vessel"& !is.null(a80_rev_per_plot[[1]])){
+      if(input$a80_rev_per == "Total Revenue/vessel" & !is.null(a80_rev_per_plot[[1]])){
         a80_rev_per_plot[[1]]
-      } else if(input$a80_rev_per == "Total Revenue/day at sea"& !is.null(a80_rev_per_plot[[2]])){
+      } else if(input$a80_rev_per == "Total Revenue/day at sea" & !is.null(a80_rev_per_plot[[2]])){
         a80_rev_per_plot[[2]]
-        } 
-      
+      } 
     })
     
-    
   })
-  
 }

@@ -6,9 +6,13 @@ crab_server <- function(id, crab_joined, crab_acl_plot,
     
     ns <- session$ns
     
-    bsai_crab_final_metrics <- reactive({
-      
-      bsai_crab_final_metrics <- crab_joined %>% 
+    ## ---------------------------------------------------------------------------------------------------
+    ## BSAI Crab Data Reactives
+    ## --------------------------------------------------------------------------------------------------
+    
+    # 1. BASE FORMATTED DATA (Long format) - Used for Modal & Main Table 
+    bsai_crab_base_formatted <- reactive({
+      crab_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season"), names_to = "varname", values_to = "Value") %>% 
@@ -35,56 +39,57 @@ crab_server <- function(id, crab_joined, crab_acl_plot,
                                    TRUE ~ varname)) 
     })
     
+    # 2. Update UI Dropdown
     observe({
       updatePickerInput(session = session, inputId = "crab_varname",
-                        choices = unique(bsai_crab_final_metrics()$varname), 
+                        choices = unique(bsai_crab_base_formatted()$varname), 
                         selected = c("Aggregate Landings (lbs)","Aggregate revenue from Catch Share species")) 
-      
     })
     
-    crab_df_stats <- reactive({
-      
-      bsai_crab_final_metrics <- bsai_crab_final_metrics() %>% 
-        pivot_wider(., names_from = "Season", values_from = "Value") %>% 
-        filter(varname %in% c(input$crab_varname)) %>% 
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#475D52",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        )%>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
-    })
-    
+    # 3. RENDER MAIN UI TABLE (Uses the smart function)
     output$crab_table <- render_gt({
-      expr = crab_df_stats()
+      build_metrics_gt(
+        cleaned_data = bsai_crab_base_formatted(),
+        selected_vars = input$crab_varname,
+        header_bg = "#475D52" # BSAI Crab Color
+      )
     })
     
-    crab_csv<-reactive(crab_joined)
+    ## ---------------------------------------------------------------------------------------------------
+    ## PREVIEW MODAL LOGIC
+    ## --------------------------------------------------------------------------------------------------
     
-    output$crab_csv<-downloadHandler(
+    # Trigger Modal
+    observeEvent(input$crab_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "crab_preview_table", 
+        download_id = "crab_download_csv",
+        title = "BSAI Crab Full Dataset Preview"
+      )
+    })
+    
+    # Render Modal Table
+    output$crab_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = bsai_crab_base_formatted(),
+        header_bg = "#475D52" # BSAI Crab Color
+      )
+    })
+    
+    # Download Handler for CSV
+    output$crab_download_csv <- downloadHandler(
       filename = function() { "bsai_crab_full_metrics.csv" },
-      
       content = function(file) {
-        write.csv(crab_csv(), file)
+        write.csv(crab_joined, file, row.names = FALSE)
       }
     )
     
+    ## ---------------------------------------------------------------------------------------------------
+    ## PLOTS
+    ## --------------------------------------------------------------------------------------------------
+    
     output$crab_lands_plot <- renderPlotly({
-      
       if(length(input$crab_lands) > 1){
         crab_acl_plot$All
       }else if(input$crab_lands == "Aggregate Landings"){
@@ -103,7 +108,6 @@ crab_server <- function(id, crab_joined, crab_acl_plot,
     })
     
     output$crab_effort_plot <- renderPlotly({
-      
       if(input$crab_effort == "Active vessels" & !is.null(crab_eff_plot$`Active vessels`)){
         crab_eff_plot$`Active vessels`
       } else if(input$crab_effort == "Days at sea" & !is.null(crab_eff_plot$`Days at sea`)){
@@ -120,12 +124,10 @@ crab_server <- function(id, crab_joined, crab_acl_plot,
     })
     
     output$crab_gini_plot <- renderPlotly({
-      
       crab_gini_plot
     })
     
     output$crab_rev_per_plot <- renderPlotly({
-      
       if(input$crab_rev_per == "Total Revenue/vessel"& !is.null(crab_rev_per_plot[[1]])){
         crab_rev_per_plot[[1]]
       } else if(input$crab_rev_per == "Total Revenue/day at sea"& !is.null(crab_rev_per_plot[[2]])){
@@ -133,9 +135,7 @@ crab_server <- function(id, crab_joined, crab_acl_plot,
       } else if(input$crab_rev_per == "Total Revenue/trip"& !is.null(crab_rev_per_plot[[3]])){
         crab_rev_per_plot[[3]]
       }  
-      
     })
     
   })
-  
 }

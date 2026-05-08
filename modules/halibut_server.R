@@ -6,10 +6,13 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
     
     ns <- session$ns
     
- 
-    halibut_final_metrics <- reactive({
-      
-      halibut_final_metrics <- hal_joined %>% 
+    ## ---------------------------------------------------------------------------------------------------
+    ## Halibut Data Reactives
+    ## --------------------------------------------------------------------------------------------------
+    
+    # 1. BASE FORMATTED DATA (Long format) - Used for Modal & Main Table
+    halibut_base_formatted <- reactive({
+      hal_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season"), names_to = "varname", values_to = "Value") %>% 
@@ -33,57 +36,57 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
                                    varname == "Quota allocated to CS program" ~ "Quota allocated to CS program (lbs)",
                                    varname == "Average price" ~ "Average price ($/lbs)",
                                    TRUE ~ varname)) 
-      
     })
     
+    # 2. Update UI Dropdown
     observe({
       updatePickerInput(session = session, inputId = "halibut_varname",
-                        choices = unique(halibut_final_metrics()$varname), 
+                        choices = unique(halibut_base_formatted()$varname), 
                         selected = c("Aggregate Landings (lbs)","Aggregate revenue from Catch Share species")) 
-      
     })
     
-    
-    halibut_df_stats <- reactive({
-      
-      halibut_final_metrics <- halibut_final_metrics() %>% 
-        pivot_wider(., names_from = "Season", values_from = "Value") %>% 
-        filter(varname %in% c(input$halibut_varname)) %>% 
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#70262B",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        )%>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
-    })
-    
+    # 3. RENDER MAIN UI TABLE (Uses the smart function)
     output$halibut_table <- render_gt({
-      expr = halibut_df_stats()
+      build_metrics_gt(
+        cleaned_data = halibut_base_formatted(),
+        selected_vars = input$halibut_varname,
+        header_bg = "#70262B" # Halibut Color
+      )
     })
     
-    halibut_csv<-reactive(hal_joined)
+    ## ---------------------------------------------------------------------------------------------------
+    ## PREVIEW MODAL LOGIC
+    ## --------------------------------------------------------------------------------------------------
     
-    output$halibut_csv<-downloadHandler(
+    # Trigger Modal
+    observeEvent(input$halibut_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "halibut_preview_table", 
+        download_id = "halibut_download_csv",
+        title = "Halibut Full Dataset Preview"
+      )
+    })
+    
+    # Render Modal Table
+    output$halibut_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = halibut_base_formatted(),
+        header_bg = "#70262B" # Halibut Color
+      )
+    })
+    
+    # Download Handler for CSV
+    output$halibut_download_csv <- downloadHandler(
       filename = function() { "halibut_full_metrics.csv" },
-      
       content = function(file) {
-        write.csv(halibut_csv(), file)
+        write.csv(hal_joined, file, row.names = FALSE)
       }
     )
+    
+    ## ---------------------------------------------------------------------------------------------------
+    ## PLOTS
+    ## --------------------------------------------------------------------------------------------------
     
     output$halibut_lands_plot <- renderPlotly({
       if(length(input$halibut_lands) > 1){
@@ -92,7 +95,8 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
         hal_acl_plot$`Aggregate Landings`
       } else if(input$halibut_lands == "Quota allocated to CS program"){
         hal_acl_plot$`Quota allocated to CS program`
-      }  })
+      }  
+    })
     
     output$halibut_hs_plot <- renderPlotly({
       hal_ent_plot
@@ -108,7 +112,6 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
       } else if(input$halibut_effort == "Days at sea"&  !is.null(hal_eff_plot$`Days at sea`)){
         hal_eff_plot$`Days at sea` %>% 
           layout(
-            p,
             annotations = list(
               x = 1,  
               y = -0.15,
@@ -138,7 +141,6 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
     })
     
     output$halibut_rev_per_plot <- renderPlotly({
-      
       if(input$halibut_rev_per == "Total Revenue/vessel"& !is.null(hal_rev_per_plot[[1]])){
         hal_rev_per_plot[[1]]
       } else if(input$halibut_rev_per == "Total Revenue/day at sea"& !is.null(hal_rev_per_plot[[2]])){
@@ -148,8 +150,5 @@ halibut_server <- function(id, hal_joined, hal_acl_plot,
       }   
     })
     
-    
-    
   })
-  
 }

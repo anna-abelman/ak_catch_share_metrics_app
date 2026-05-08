@@ -8,13 +8,13 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
     
     ns <- session$ns
     
- 
     ## ---------------------------------------------------------------------------------------------------
-    ## CGOA Rockfish Plots
+    ## CGOA Rockfish Data Reactives
     ## --------------------------------------------------------------------------------------------------
     
-    cgoa_rf_final_metrics <- reactive({
-      cgoa_rf_final_metrics <- cgoa_rock_joined %>% 
+    # 1. BASE FORMATTED DATA (Long format, ALL Sectors) - Used for the Modal
+    cgoa_rf_base_formatted <- reactive({
+      cgoa_rock_joined %>% 
         mutate(across(-c("Season"), ~ifelse(is.na(.), "-", .))) %>% 
         mutate(across(-c("Season"), ~as.character(.))) %>% 
         pivot_longer(., cols= -c("Season", "sector"), names_to = "varname", values_to = "Value") %>% 
@@ -34,64 +34,71 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
         mutate(varname = case_when(varname == "Aggregate Landings" ~ "Aggregate Landings (mt)",
                                    varname == "Quota allocated to CS program" ~ "Quota allocated to CS program (mt)",
                                    varname == "Average price" ~ "Average price ($/mt)",
-                                   TRUE ~ varname)) %>% 
+                                   TRUE ~ varname))
+    })
+    
+    # 2. MAIN UI FILTERED METRICS (Pivoted, Filtered by Sector) - Used for UI Dropdowns
+    cgoa_rf_final_metrics <- reactive({
+      cgoa_rf_base_formatted() %>% 
         pivot_wider(., names_from = "Season", values_from = "Value") %>% 
         filter(!if_all(.cols = -c(sector, varname), .fns = ~ .x == "-") ) %>% 
         filter(sector == input$cgoa_rf_sector)
-        
     })
     
     observe({
       updatePickerInput(session = session, inputId = "cgoa_rf_varname",
                         choices = unique(cgoa_rf_final_metrics()$varname), 
                         selected = c("Aggregate Landings (mt)","Aggregate revenue from Catch Share species")) 
-      
     })
     
-    
-    cgoa_rf_df_stats <- reactive({
-      
-      cgoa_rf_final_metrics <- cgoa_rf_final_metrics() %>% 
-        filter(varname %in% c(input$cgoa_rf_varname) & sector == input$cgoa_rf_sector) %>% 
-        select(-sector) %>% 
-        gt(rowname_col = "varname") %>% 
-        opt_row_striping() %>%
-        tab_options(
-          column_labels.background.color = "#2C3544",
-          column_labels.font.weight = "bold",
-          row.striping.background_color = "#f9f9fb",
-          heading.title.font.size = px(22),
-          column_labels.font.size = px(16),
-          stub.font.size = "small",
-          table.font.size = "small",
-          data_row.padding = px(2),
-        ) %>%
-        cols_width(everything() ~px(100)) %>%
-        tab_style(
-          style = list(
-            cell_text(color = "white")
-          ),
-          locations = cells_column_labels()
-        )%>% 
-        tab_footnote("'-' indicates data not available for metric. Confidential data is suppressed and specified by 'Conf.' in the table above.")
-    })
-    
+    # 3. RENDER MAIN UI TABLE (Uses the smart function)
     output$cgoa_rf_table <- render_gt({
-      expr = cgoa_rf_df_stats()
+      
+      filtered_data <- cgoa_rf_base_formatted() %>%
+        filter(sector == input$cgoa_rf_sector)
+      
+      build_metrics_gt(
+        cleaned_data = filtered_data,
+        selected_vars = input$cgoa_rf_varname,
+        header_bg = "#2C3544" # CGOA Rockfish Color
+      )
     })
     
-    cgoa_rf_csv<-reactive(cgoa_rock_joined)
+    ## ---------------------------------------------------------------------------------------------------
+    ## PREVIEW MODAL LOGIC
+    ## --------------------------------------------------------------------------------------------------
     
-    output$cgoa_rf_csv<-downloadHandler(
-      filename = function() { "cgoa_rf_full_metrics.csv" },
-      
+    # Trigger Modal
+    observeEvent(input$cgoa_rf_preview_btn, {
+      show_preview_modal(
+        ns = ns, 
+        table_id = "cgoa_rf_preview_table",  # Updated ID
+        download_id = "cgoa_rf_download_csv", # Updated ID
+        title = "CGOA Rockfish Full Dataset Preview"
+      )
+    })
+    
+    # Render Modal Table using the UNFILTERED base data (All Sectors)
+    output$cgoa_rf_preview_table <- render_gt({
+      build_preview_gt(
+        raw_data = cgoa_rf_base_formatted(),
+        header_bg = "#2C3544" # CGOA Rockfish Color
+      )
+    })
+    
+    # Download Handler for CSV
+    output$cgoa_rf_download_csv <- downloadHandler(
+      filename = function() { "cgoa_rockfish_full_metrics.csv" },
       content = function(file) {
-        write.csv(cgoa_rf_csv(), file)
+        write.csv(cgoa_rock_joined, file, row.names = FALSE)
       }
     )
     
+    ## ---------------------------------------------------------------------------------------------------
+    ## PLOTS
+    ## --------------------------------------------------------------------------------------------------
+    
     output$cgoa_rf_lands_plot <- renderPlotly({
-      
       if(input$cgoa_rf_lands_sector == "All"){
         cgoa_rock_acl_plot_All$All
       }else if(input$cgoa_rf_lands_sector == "CP"){
@@ -102,7 +109,6 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
     })
     
     output$cgoa_rf_hs_plot <- renderPlotly({
-      
       cgoa_rock_ent_plot
     })
     
@@ -111,13 +117,11 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
     })
     
     output$cgoa_rf_effort_plot <- renderPlotly({
-      
       if(input$cgoa_rf_effort == "Active vessels"& !is.null(cgoa_rock_eff_plot$`Active vessels`)){
         cgoa_rock_eff_plot$`Active vessels`
       } else if(input$cgoa_rf_effort == "Days at sea"& !is.null(cgoa_rock_eff_plot$`Days at sea`)){
         cgoa_rock_eff_plot$`Days at sea` %>% 
           layout(
-            p,
             annotations = list(
               x = 1,  
               y = -0.15,
@@ -147,7 +151,6 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
     })
     
     output$cgoa_rf_gini_plot <- renderPlotly({
-      
       if(input$cgoa_rf_gini_sector == "All"){
         cgoa_rock_gini_plot_All
       }else if(input$cgoa_rf_gini_sector == "CP"){
@@ -155,11 +158,9 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
       } else if(input$cgoa_rf_gini_sector == "CV"){
         cgoa_rock_gini_plot_CV
       }  
-      
     })
     
     output$cgoa_rf_rev_per_plot <- renderPlotly({
-      
       if(input$cgoa_rf_rev_per == "Total Revenue/vessel"& !is.null(cgoa_rock_rev_per_plot[[1]])){
         cgoa_rock_rev_per_plot[[1]]
       } else if(input$cgoa_rf_rev_per == "Total Revenue/day at sea"& !is.null(cgoa_rock_rev_per_plot[[2]])){
@@ -168,5 +169,4 @@ cgoa_rockfish_server <- function(id,  cgoa_rock_joined, cgoa_rock_acl_plot_All, 
     })
     
   })
-  
 }
