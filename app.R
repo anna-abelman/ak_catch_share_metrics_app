@@ -16,7 +16,7 @@ library(gtExtras)
 library(htmlwidgets)
 
 # Read the RDS data created with targets and save_data.R
-data <- readRDS(here("exports", "final_metrics_2026-05-08.rds"))
+data <- readRDS(here("exports", "final_metrics_2026-06-08.rds"))
 
 # set current year
 current_yr = 2024
