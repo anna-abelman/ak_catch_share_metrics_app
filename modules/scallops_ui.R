@@ -35,8 +35,8 @@ scallops_ui <- function(id) {
         card(pickerInput(
           inputId = ns("scallop_lands"), 
           label = "Select variable:", 
-          choices = c("Aggregate Landings", "ACL or Quota/TAC"), 
-          selected = c("Aggregate Landings", "ACL or Quota/TAC"),
+          choices = c("Aggregate Landings"),# "ACL or Quota/TAC"), 
+          selected = c("Aggregate Landings"),# "ACL or Quota/TAC"),
           options = list(`actions-box` = TRUE),
           multiple = TRUE
         ),

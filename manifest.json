@@ -4171,13 +4171,16 @@
   },
   "files": {
     "app.R": {
-      "checksum": "8d247751174b5227aa7837525fb9bc2e"
+      "checksum": "ea10767a3a1206302cc1e80095e214cd"
     },
     "exports/final_metrics_2025-08-06.rds": {
       "checksum": "a5ce2d3cf64f60ac0200fe64d9b1090e"
     },
     "exports/final_metrics_2026-05-08.rds": {
       "checksum": "ac1809dad3cb0d9f11b69426404f99a4"
+    },
+    "exports/final_metrics_2026-06-08.rds": {
+      "checksum": "e7f0da163b78b4a6e83a4185d77bc630"
     },
     "modules/a80_server.R": {
       "checksum": "bb1a9c0cbf61d31e57980ec44813982c"
@@ -4207,7 +4210,7 @@
       "checksum": "aa199e3d7a34ea5f72f2bbe358bc89df"
     },
     "modules/flbsai_pcod_ui.R": {
-      "checksum": "9e51bfecda2a65968f00125c12c32d6b"
+      "checksum": "c60a958ddb50adf084446bafc79644ff"
     },
     "modules/halibut_server.R": {
       "checksum": "7d4cd5f71706912e099158dcb5adca3f"
@@ -4219,7 +4222,7 @@
       "checksum": "8b19cfc149cbbd8575fec8f485128077"
     },
     "modules/rockfish_ui.R": {
-      "checksum": "bc15f6580a9d6fec23fe3cd2c20130cd"
+      "checksum": "dae0161ab78bf0501ae8abf0d719038f"
     },
     "modules/sablefish_server.R": {
       "checksum": "607793caf5df67cd7a33ce9a2b3dc6b3"
@@ -4231,7 +4234,7 @@
       "checksum": "fccbf5f4b64cc090eaaec7ea21b4d2f7"
     },
     "modules/scallops_ui.R": {
-      "checksum": "43ec6fe6e0ef8c92c13827cb43edae8c"
+      "checksum": "263c3b10e7591b5294a4d0cd05ca2234"
     },
     "R/build_full_preview_gt.R": {
       "checksum": "ae8831ebe75ae168565449515fd541eb"
